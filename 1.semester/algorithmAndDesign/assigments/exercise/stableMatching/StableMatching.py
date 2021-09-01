@@ -26,13 +26,16 @@ def run_gs_algo(proposers: map, rejecters: map, n: int) -> list:
         potential_rejecter = proposers[current_proposer]["priorityList"][0]
         if potential_rejecter not in matches:
             matches[potential_rejecter] = [current_proposer, potential_rejecter]
+          
             proposers[current_proposer]["priorityList"].pop(0)
             available_proposers.pop(0)
         else:
             # Check if new current_propser is a better match then old_proposer
             old_proposer = matches[potential_rejecter][0]
+           
             current_proposer_score = rejecters[potential_rejecter]["priorityList"].index(current_proposer)
             old_proposer_score = rejecters[potential_rejecter]["priorityList"].index(old_proposer)
+           
             if(current_proposer_score < old_proposer_score):
                 proposers[current_proposer]["priorityList"].pop(0)
                 matches[potential_rejecter] = [current_proposer, potential_rejecter]
@@ -41,6 +44,7 @@ def run_gs_algo(proposers: map, rejecters: map, n: int) -> list:
                 available_proposers.append(old_proposer)
             else:
                 proposers[current_proposer]["priorityList"].pop(0)
+                
     return [proposers[match[0]]["name"] + " -- " + rejecters[match[1]]["name"] for match in matches.values()]
 
 
