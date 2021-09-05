@@ -24,30 +24,43 @@ def main():
 
 
 def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
-    available_proposers: list = [proposer for proposer in proposers]
     matches: dict[str, list[str]] = {}
+    available_proposers: list = [proposer for proposer in proposers]
+    
+    def get_proposer_score(proposer_id: int):
+        return rejecters[potential_rejecter]["priorityList"].index(proposer_id)
+
+    def get_priority_list(proposer_id: int) -> list[int]:
+        return proposers[proposer_id]["priorityList"]
+
+    def add_match(proposer_id: int, rejecter_id: int) -> None:
+        matches[rejecter_id] = [proposer_id, rejecter_id]
+
+
 
     while(len(available_proposers) != 0):
         current_proposer = available_proposers[0]
-        potential_rejecter = proposers[current_proposer]["priorityList"][0]
+        potential_rejecter = get_priority_list(current_proposer)[0]
+
         if potential_rejecter not in matches:
-            matches[potential_rejecter] = [current_proposer, potential_rejecter]
-            proposers[current_proposer]["priorityList"].pop(0)
+            add_match(current_proposer, potential_rejecter)
+            
+            get_priority_list(current_proposer).pop(0)
             available_proposers.pop(0)
         else:
             old_proposer = matches[potential_rejecter][0]
 
-            current_proposer_score = rejecters[potential_rejecter]["priorityList"].index(current_proposer)
-            old_proposer_score = rejecters[potential_rejecter]["priorityList"].index(old_proposer)
+            current_proposer_score = get_proposer_score(current_proposer)
+            old_proposer_score = get_proposer_score(old_proposer)
 
             if(current_proposer_score < old_proposer_score):
-                proposers[current_proposer]["priorityList"].pop(0)
-                matches[potential_rejecter] = [current_proposer, potential_rejecter]
+                get_priority_list(current_proposer).pop(0)
+                add_match(current_proposer, potential_rejecter)
 
                 available_proposers.pop(0)
                 available_proposers.append(old_proposer)
             else:
-                proposers[current_proposer]["priorityList"].pop(0)
+                get_priority_list(current_proposer).pop(0)
 
     return [proposers[match[0]]["name"] + " -- " + rejecters[match[1]]["name"] for match in matches.values()]
 
