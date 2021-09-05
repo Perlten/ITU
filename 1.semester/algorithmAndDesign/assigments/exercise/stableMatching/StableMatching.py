@@ -28,10 +28,10 @@ def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
     available_proposers: list = [proposer for proposer in proposers]
     
     def get_proposer_rank(proposer_id: int, rejecter_id: int):
-        return rejecters[rejecter_id]["priorityList"].index(proposer_id)
+        return rejecters[rejecter_id]["priority_index_map"][proposer_id]
 
     def get_proposer_priority_list(proposer_id: int) -> list[int]:
-        return proposers[proposer_id]["priorityList"]
+        return proposers[proposer_id]["priority_list"]
 
     def add_match(proposer_id: int, rejecter_id: int) -> None:
         matches[rejecter_id] = [proposer_id, rejecter_id]
@@ -65,7 +65,7 @@ def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
     return [proposers[match[0]]["name"] + " -- " + rejecters[match[1]]["name"] for match in matches.values()]
 
 
-def create_map(proposer: map, rejecter: map, n: int, input: fileinput.FileInput) -> None:
+def create_map(proposer: dict, rejecter: dict, n: int, input: fileinput.FileInput) -> None:
     def create_entity(map: map):
         data = input.readline().split(" ")
         index = int(data[0])
@@ -85,14 +85,18 @@ def create_map(proposer: map, rejecter: map, n: int, input: fileinput.FileInput)
             else:
                 entity = rejecter[index]
 
-            priorityList = [int(x) for x in line.split(":")[1].removesuffix("\n").strip().split(" ")]
-            entity["priorityList"] = priorityList
+            priority_list = [int(x) for x in line.split(":")[1].removesuffix("\n").strip().split(" ")]
+            entity["priority_list"] = priority_list
 
     for i in range(n):
         create_entity(proposer)
         create_entity(rejecter)
 
     add_priorities()
+    for r in rejecter.values():
+        r["priority_index_map"] : dict[int, int] = {}
+        for i, p in enumerate(r["priority_list"]):
+            r["priority_index_map"][p] = i 
 
 
 def create_input() -> fileinput.FileInput:
