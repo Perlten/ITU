@@ -16,6 +16,7 @@ public class DashPrinter {
       } catch (Exception e) {
       }
       System.out.println("|");
+
     } finally {
       lock.unlock();
     }
@@ -23,7 +24,6 @@ public class DashPrinter {
 
   public static void main(String[] args) {
     try {
-
       DashPrinter p = new DashPrinter();
 
       Thread t1 = new Thread(() -> {
