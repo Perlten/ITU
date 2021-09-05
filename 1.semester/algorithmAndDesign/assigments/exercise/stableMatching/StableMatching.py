@@ -3,18 +3,18 @@ import fileinput
 
 
 def main():
-    input = create_input()
+    input_data = create_input()
 
-    line: str = input.readline()
+    line: str = input_data.readline()
     while line.startswith("#"):
-        line = input.readline()
+        line = input_data.readline()
 
     n = int(line[2:])
 
     proposer = {}
     rejecter = {}
 
-    create_map(proposer, rejecter, n, input)
+    create_map(proposer, rejecter, n, input_data)
 
     res = run_gs_algo(proposer, rejecter, n)
 
@@ -24,13 +24,13 @@ def main():
 
 
 def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
-    matches: dict[str, list[str]] = {}
+    matches: dict[int, list[int]] = {}
     available_proposers: list = [proposer for proposer in proposers]
     
-    def get_proposer_score(proposer_id: int):
-        return rejecters[potential_rejecter]["priorityList"].index(proposer_id)
+    def get_proposer_rank(proposer_id: int, rejecter_id: int):
+        return rejecters[rejecter_id]["priorityList"].index(proposer_id)
 
-    def get_priority_list(proposer_id: int) -> list[int]:
+    def get_proposer_priority_list(proposer_id: int) -> list[int]:
         return proposers[proposer_id]["priorityList"]
 
     def add_match(proposer_id: int, rejecter_id: int) -> None:
@@ -40,27 +40,27 @@ def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
 
     while(len(available_proposers) != 0):
         current_proposer = available_proposers[0]
-        potential_rejecter = get_priority_list(current_proposer)[0]
+        potential_rejecter = get_proposer_priority_list(current_proposer)[0]
 
         if potential_rejecter not in matches:
             add_match(current_proposer, potential_rejecter)
             
-            get_priority_list(current_proposer).pop(0)
+            get_proposer_priority_list(current_proposer).pop(0)
             available_proposers.pop(0)
         else:
             old_proposer = matches[potential_rejecter][0]
 
-            current_proposer_score = get_proposer_score(current_proposer)
-            old_proposer_score = get_proposer_score(old_proposer)
+            current_proposer_rank = get_proposer_rank(current_proposer, potential_rejecter)
+            old_proposer_rank = get_proposer_rank(old_proposer, potential_rejecter)
 
-            if(current_proposer_score < old_proposer_score):
-                get_priority_list(current_proposer).pop(0)
+            if(current_proposer_rank < old_proposer_rank):
+                get_proposer_priority_list(current_proposer).pop(0)
                 add_match(current_proposer, potential_rejecter)
 
                 available_proposers.pop(0)
                 available_proposers.append(old_proposer)
             else:
-                get_priority_list(current_proposer).pop(0)
+                get_proposer_priority_list(current_proposer).pop(0)
 
     return [proposers[match[0]]["name"] + " -- " + rejecters[match[1]]["name"] for match in matches.values()]
 
@@ -75,7 +75,7 @@ def create_map(proposer: map, rejecter: map, n: int, input: fileinput.FileInput)
 
     def add_priorities() -> None:
         input.readline()
-        for i in range(n * 2):
+        for _ in range(n * 2):
             line: str = input.readline()
             index: int = int(line.split(":")[0])
 
