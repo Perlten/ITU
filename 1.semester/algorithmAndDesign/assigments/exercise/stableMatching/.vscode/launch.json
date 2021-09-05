@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["sm-bbt-in.txt"]
+            "args": ["sm-worst-case-500-in.txt"]
         }
     ]
 }

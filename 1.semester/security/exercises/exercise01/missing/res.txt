@@ -1,0 +1,1 @@
+cat /usr/share/dict/cracklib-small | grep e | wc -w
