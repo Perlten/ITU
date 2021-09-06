@@ -70,5 +70,4 @@ public class MonitorImpl {
             lock.unlock();
         }
     }
-
 }
