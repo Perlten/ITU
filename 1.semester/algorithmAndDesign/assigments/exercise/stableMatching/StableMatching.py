@@ -39,14 +39,12 @@ def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
 
 
     while(len(available_proposers) != 0):
-        current_proposer = available_proposers[0]
-        potential_rejecter = get_proposer_priority_list(current_proposer)[0]
+        current_proposer = available_proposers.pop(0)
+        potential_rejecter = get_proposer_priority_list(current_proposer).pop(0)
 
         if potential_rejecter not in matches:
             add_match(current_proposer, potential_rejecter)
             
-            get_proposer_priority_list(current_proposer).pop(0)
-            available_proposers.pop(0)
         else:
             old_proposer = matches[potential_rejecter][0]
 
@@ -54,14 +52,16 @@ def run_gs_algo(proposers: dict, rejecters: dict, n: int) -> list:
             old_proposer_rank = get_proposer_rank(old_proposer, potential_rejecter)
 
             if(current_proposer_rank < old_proposer_rank):
-                get_proposer_priority_list(current_proposer).pop(0)
                 add_match(current_proposer, potential_rejecter)
 
-                available_proposers.pop(0)
                 available_proposers.append(old_proposer)
             else:
-                get_proposer_priority_list(current_proposer).pop(0)
+                available_proposers.append(current_proposer)
 
+    return format_output(proposers, rejecters, matches)
+
+
+def format_output(proposers, rejecters, matches):
     return [proposers[match[0]]["name"] + " -- " + rejecters[match[1]]["name"] for match in matches.values()]
 
 
