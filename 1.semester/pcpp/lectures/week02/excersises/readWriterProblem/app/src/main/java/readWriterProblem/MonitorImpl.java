@@ -3,7 +3,6 @@ package readWriterProblem;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class MonitorImpl {
 
     private int readLockAcquired = 0;
@@ -63,9 +62,13 @@ public class MonitorImpl {
 
     public void releaseLockWrite() {
         lock.lock();
-        write = false;
-        condition.signalAll();
-        lock.unlock();
+        try {
+
+            write = false;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 
 }
