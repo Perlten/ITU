@@ -26,7 +26,8 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'readWriterProblem.VisibilityProblem'
+    // mainClass = 'readWriterProblem.VisibilityProblem'
+    mainClass = 'readWriterProblem.App'
 }
 
 tasks.named('test') {

@@ -1,47 +1,73 @@
 package readWriterProblem;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class MonitorImpl {
 
     private int readLockAcquired = 0;
-    private int readLockRelased = 0;
+    private int readLockReleased = 0;
 
     private boolean write = false;
 
-    public synchronized void lockRead() {
-        while (write) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
+    private ReentrantLock lock = new ReentrantLock(true);
+    private Condition condition = lock.newCondition();
+
+    public void lockRead() {
+        lock.lock();
+        try {
+
+            while (write) {
+                try {
+                    condition.await();
+                } catch (InterruptedException e) {
+                }
             }
-        }
-        readLockAcquired++;
-    }
-
-    public synchronized void releaseLockRead() {
-        readLockRelased++;
-        if (readLockAcquired == readLockRelased) {
-            this.notifyAll();
+            readLockAcquired++;
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void lockWrite() {
+    public void releaseLockRead() {
+        lock.lock();
+        try {
+
+            readLockReleased++;
+            if (readLockAcquired == readLockReleased) {
+                condition.signalAll();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void lockWrite() {
+        lock.lock();
         try {
             while (write) {
-                this.wait();
+                condition.await();
             }
 
             write = true;
 
-            while (readLockAcquired != readLockRelased) {
-                this.wait();
+            while (readLockAcquired != readLockReleased) {
+                condition.await();
             }
         } catch (InterruptedException e) {
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void releaseLockWrite() {
-        write = false;
-        this.notifyAll();
-    }
+    public void releaseLockWrite() {
+        lock.lock();
+        try {
 
+            write = false;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
 }
