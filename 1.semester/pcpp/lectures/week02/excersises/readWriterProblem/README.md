@@ -39,7 +39,8 @@ Now the program will always terminate. This is because the value is forced to be
 
 
 # 1,2
-There are a race condition. This is because one method is static and the other is not. This means that we are actually working with two different locks. The static locks uses the class synchronized(Mystery.class) and the other uses the instance of the object synchronized(this). 
+There are a race condition. This is because one method is static and the other is not. This means that we are actually working with two different locks. The static locks uses the class 
+synchronized(Mystery.class) and the other uses the instance of the object synchronized(this). 
 
 
 # 3
