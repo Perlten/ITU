@@ -21,6 +21,8 @@
 
 package adpro
 
+import scala.collection.immutable
+
 // Exercise  1
 
 trait OrderedPoint extends scala.math.Ordered[java.awt.Point] {
@@ -158,22 +160,40 @@ object ExercisesOption {
 
   // Exercise 8
 
-  def variance(xs: Seq[Double]): Option[Double] = {
-    map2()
-    xs.map(x1 => math.pow(x1 - mean(xs).getOrElse[Double](0), 2))
-  }
+  def variance(xs: Seq[Double]): Option[Double] = ???
 
   // Exercise 9
 
-  def map2[A, B, C](ao: Option[A], bo: Option[B])(f: (A, B) => C): Option[C] =
-    ???
+  def map2[A, B, C](ao: Option[A], bo: Option[B])(f: (A, B) => C): Option[C] = {
+    for {
+      a <- ao
+      b <- bo
+      res <- Some(f(a, b))
+    } yield (res)
+  }
 
   // Exercise 10
 
   def sequence[A](aos: List[Option[A]]): Option[List[A]] = ???
+  // def sequence[A](aos: List[Option[A]]): Option[List[A]] = {
+  //   for {
+  //     a <- aos.foldRight[List[A]](List[A]())((a: Option[A], z: List[A]) => a :: z)
+  //     // a <- aos
+      
+
+  //   } yield a
+  // }
 
   // Exercise 11
 
-  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = {
+  for {
+    a <- as
+    b = f(a)
+    // c <- b
+    
+  
+  } yield (b)
+  }
 
 }

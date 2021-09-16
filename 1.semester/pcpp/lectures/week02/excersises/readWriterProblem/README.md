@@ -31,7 +31,7 @@ if (myBean.getValue() > 1.0)
     Thread.sleep(1);
   }
 ```
-
+  
 ## 4
 Now the program will always terminate. This is because the value is forced to be stored in main memory thereby avoiding being chased in a local register
 
