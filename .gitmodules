@@ -1,3 +1,6 @@
 [submodule "1.semester/advancedProgramming/2021-adpro"]
 	path = 1.semester/advancedProgramming/2021-adpro
 	url = git@github.itu.dk:wasowski/2021-adpro.git
+[submodule "1.semester/pcpp/PCPP2021-public"]
+	path = 1.semester/pcpp/PCPP2021-public
+	url = git@github.itu.dk:jst/PCPP2021-public.git

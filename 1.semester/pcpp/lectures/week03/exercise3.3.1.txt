@@ -1,0 +1,37 @@
+# OS:   Linux; 5.4.143-1-MANJARO; amd64
+# JVM:  Oracle Corporation; 11.0.12
+# CPU:  null; 8 "cores"
+# Date: 2021-09-13T14:08:14+0200
+countSequential                13564750,3 ns   35522,56         32
+countParallelN       1         34946352,5 ns 3882992,67          8
+countParallelN       2         21717161,1 ns 1280828,34         16
+countParallelN       3         17436483,4 ns 1342727,81         16
+countParallelN       4         16628908,4 ns  923870,02         16
+countParallelN       5         15975919,6 ns 1023700,50         16
+countParallelN       6         13087859,0 ns 2403734,16         32
+countParallelN       7         13434710,8 ns  887127,32         32
+countParallelN       8         12805613,3 ns  302325,14         32
+countParallelN       9         10606423,3 ns  652019,49         32
+countParallelN      10          8557594,9 ns  832662,67         32
+countParallelN      11          8835118,3 ns  859929,28         32
+countParallelN      12          8362107,9 ns  540685,15         32
+countParallelN      13          8537749,3 ns  337124,36         32
+countParallelN      14          8244728,7 ns  594782,81         32
+countParallelN      15          8338052,9 ns  586670,84         32
+countParallelN      16          8193397,4 ns  176781,02         32
+countParallelN      17          8369217,6 ns  744433,84         32
+countParallelN      18          7653230,4 ns  178074,05         64
+countParallelN      19          8469274,6 ns 1366762,67         32
+countParallelN      20          7642775,8 ns  565255,32         32
+countParallelN      21          7801499,2 ns  544704,41         64
+countParallelN      22          8670772,3 ns  701951,53         64
+countParallelN      23          7738292,1 ns  298876,87         64
+countParallelN      24          7890794,7 ns  549142,98         32
+countParallelN      25          7828772,2 ns  444855,76         64
+countParallelN      26          7742569,1 ns  487567,21         64
+countParallelN      27          7939026,5 ns  530303,54         64
+countParallelN      28          7924671,9 ns  447372,33         32
+countParallelN      29          7658731,6 ns  334724,64         64
+countParallelN      30          7798498,7 ns  281952,91         64
+countParallelN      31          8027572,1 ns  276889,42         64
+countParallelN      32          8067908,8 ns  514206,43         32

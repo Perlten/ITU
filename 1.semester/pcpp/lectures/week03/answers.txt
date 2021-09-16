@@ -1,0 +1,40 @@
+# Exercise 3.1
+
+Mark1 is fun because it seem to be incredebly fast, however this is because the JIT detects that the value we store the multiplication in is never used and therefore removes the unused code at run time
+
+
+Mark5 is pretty interesting as you can see how the jit compiler improves the runtime the more time it has to analyze the solution
+
+
+The only thing i find a bit wierd is the fact that all the marks are significantly faster on my machine than the ones from the note. Maybe this is because of my operating system, or some other factor unbeknown to me
+
+
+
+# Exercise 3.2.1
+
+In all the mesurements there is a decrease in runtime when goind from running it two times to four. However there is a huge decrease in run time when going from two -> four times when inspecting thread creation 
+Thread create                     31390,3 ns   75981,87          2
+Thread create                      8739,0 ns    2604,13          4
+
+
+
+# Exercise 3.2.2
+
+# OS:   Linux; 5.4.143-1-MANJARO; amd64
+# JVM:  Oracle Corporation; 11.0.12
+# CPU:  null; 8 "cores"
+# Date: 2021-09-13T13:56:13+0200
+Mark 6 measurements
+hashCode()                            3,1 ns       0,01  134217728
+Point creation                       48,0 ns       3,13    8388608
+Thread's work                      7700,7 ns      42,23      32768
+Thread create                       875,3 ns      12,16     524288
+Thread create start               55965,3 ns    2266,12       8192
+Thread create start join         113541,2 ns    8599,73       4096
+ai value = 901060000
+Uncontended lock                      6,0 ns       0,12   67108864
+
+
+
+
+
