@@ -3,7 +3,6 @@ import sys
 import re
 import math
 
-
 class Point:
     def __init__(self, x: int, y: int):
         self.x = x
@@ -22,11 +21,13 @@ class Point:
 
 
 def main():
+
     point_list = get_formatted_data()
 
     px = sorted(point_list, key=lambda p: p.x)
-
-    sp = smallest_point(px)
+    py = sorted(point_list, key=lambda p: p.y)
+    
+    sp = smallest_point(px, py)
 
     print(sp)
     # print(brute_force(point_list))
@@ -42,33 +43,36 @@ def brute_force(p: list):
     return min_distance
 
 
-def examine_overlap(p: list, delta: int, split_x: int) -> int:
-    py = sorted([x for x in p if x.x >= split_x -
-                delta and x.x <= split_x + delta], key=lambda p: p.y)
+def examine_overlap(py: list, delta: int, split_x: int) -> int:
+    py = [point for point in py if point.x >= split_x -
+          delta and point.x <= split_x + delta]
 
     for i in range(len(py)):
         for j in range(min(7, len(py) - i)):
-            if p[i] != p[j + i]:
+            if py[i] != py[j + i]:
                 delta = min(delta, py[i].distance(py[j + i]))
 
     return delta
 
 
-def smallest_point(p: list) -> int:
-    if len(p) <= 3:
-        return brute_force(p)
+def smallest_point(px: list, py: list) -> int:
+    if len(px) <= 3:
+        return brute_force(px)
 
-    split_point = len(p) // 2
+    split_point = len(px) // 2
 
-    lp = p[:split_point]
-    rp = p[split_point:]
+    x_l_p = px[:split_point]
+    x_r_p = px[split_point:]
 
-    l_delta = smallest_point(lp)
-    r_delta = smallest_point(rp)
+    y_l_p = py[:split_point]
+    y_r_p = py[split_point:]
+
+    l_delta = smallest_point(x_l_p, y_l_p)
+    r_delta = smallest_point(x_r_p, y_r_p)
 
     delta = l_delta if l_delta <= r_delta else r_delta
-    
-    return examine_overlap(p, delta, p[split_point].x)
+
+    return examine_overlap(py, delta, px[split_point].x)
 
 
 def get_formatted_data() -> list:
