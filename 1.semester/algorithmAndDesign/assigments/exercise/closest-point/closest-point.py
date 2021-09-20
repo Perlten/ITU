@@ -66,8 +66,8 @@ def smallest_point(p: list) -> int:
     l_delta = smallest_point(lp)
     r_delta = smallest_point(rp)
 
-    delta = l_delta if l_delta <= r_delta else r_delta
-    
+    delta = min(l_delta, r_delta)
+
     return examine_overlap(p, delta, p[split_point].x)
 
 
