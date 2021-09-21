@@ -2,6 +2,7 @@ import fileinput
 import sys
 import re
 import math
+import time
 
 
 class Point:
@@ -24,11 +25,14 @@ class Point:
 def main():
     point_list = get_formatted_data()
 
+    old_time = time.time()
+
     px = sorted(point_list, key=lambda p: p.x)
 
     sp = smallest_point(px)
 
     print(sp)
+    print(time.time() - old_time)
     # print(brute_force(point_list))
 
 
@@ -47,7 +51,7 @@ def examine_overlap(p: list, delta: int, split_x: int) -> int:
                 delta and x.x <= split_x + delta], key=lambda p: p.y)
 
     for i in range(len(py)):
-        for j in range(min(7, len(py) - i)):
+        for j in range(min(8, len(py) - i)):
             if p[i] != p[j + i]:
                 delta = min(delta, py[i].distance(py[j + i]))
 
@@ -55,16 +59,13 @@ def examine_overlap(p: list, delta: int, split_x: int) -> int:
 
 
 def smallest_point(p: list) -> int:
-    if len(p) <= 3:
+    if len(p) <= 25:
         return brute_force(p)
 
     split_point = len(p) // 2
 
-    lp = p[:split_point]
-    rp = p[split_point:]
-
-    l_delta = smallest_point(lp)
-    r_delta = smallest_point(rp)
+    l_delta = smallest_point(p[:split_point])
+    r_delta = smallest_point(p[split_point:])
 
     delta = min(l_delta, r_delta)
 
