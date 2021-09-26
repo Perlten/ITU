@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/program.py",
             "console": "integratedTerminal",
-            "args": ["4.in"]
+            "args": ["2.in"]
         }
     ]
 }

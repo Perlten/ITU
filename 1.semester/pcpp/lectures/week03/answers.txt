@@ -37,4 +37,64 @@ Uncontended lock                      6,0 ns       0,12   67108864
 
 
 
+3.3.1
+
+# OS:   Windows 10; 10.0; amd64
+# JVM:  Oracle Corporation; 15.0.1
+# CPU:  Intel64 Family 6 Model 165 Stepping 5, GenuineIntel; 16 "cores"
+# Date: 2021-09-26T13:24:48+0200
+countSequential                 7054998.8 ns   20933.23         64
+countParallelN       1          7386489.1 ns   15618.70         64
+countParallelN       2          4721071.9 ns   51325.91         64
+countParallelN       3          3411989.4 ns   25188.10        128
+countParallelN       4          2696241.5 ns   33576.84        128
+countParallelN       5          2368310.7 ns   40661.12        128
+countParallelN       6          2670220.5 ns   21223.19        128
+countParallelN       7          2775562.8 ns   23403.03        128
+countParallelN       8          2857360.1 ns   14565.08        128
+countParallelN       9          2883699.7 ns   18482.00        128
+countParallelN      10          2929316.1 ns   24225.71        128
+countParallelN      11          2922749.0 ns   20965.12        128
+countParallelN      12          2980693.0 ns   19011.29        128
+countParallelN      13          3081359.0 ns  106286.95        128
+countParallelN      14          3027045.4 ns   14027.93        128
+countParallelN      15          3142420.9 ns   66770.74        128
+countParallelN      16          3083728.7 ns   16823.88        128
+
+
+3.3.3
+
+# OS:   Windows 10; 10.0; amd64
+# JVM:  Oracle Corporation; 15.0.1
+# CPU:  Intel64 Family 6 Model 165 Stepping 5, GenuineIntel; 16 "cores"
+# Date: 2021-09-26T13:30:54+0200
+countSequential                 7151889.1 ns   68391.58         64
+countParallelN       1          7356475.2 ns   48221.28         64
+countParallelN       2          4616901.3 ns   50029.22         64
+countParallelN       3          3504547.0 ns   62754.69        128
+countParallelN       4          2798972.9 ns   88543.83        128
+countParallelN       5          2548723.8 ns  174573.10        128
+countParallelN       6          2348388.0 ns  146451.25        128
+countParallelN       7          2065792.9 ns   56731.93        128
+countParallelN       8          1932082.3 ns   53637.74        256
+countParallelN       9          1906483.5 ns   68953.03        256
+countParallelN      10          1792668.6 ns   14470.11        256
+countParallelN      11          1758637.1 ns   52828.16        256
+countParallelN      12          1699557.8 ns   25169.82        256
+countParallelN      13          1703774.3 ns   27142.12        256
+countParallelN      14          1693935.9 ns   66299.14        256
+countParallelN      15          1704002.3 ns   68437.10        256
+countParallelN      16          1695725.4 ns   47862.75        256
+
+
+
+3.4
+
+# OS:   Windows 10; 10.0; amd64
+# JVM:  Oracle Corporation; 15.0.1
+# CPU:  Intel64 Family 6 Model 165 Stepping 5, GenuineIntel; 16 "cores"
+# Date: 2021-09-26T13:30:54+0200
+Volatile test                         5.4 ns       0.02   67108864
+Regular test                          1.9 ns       0.00  134217728
+
 
