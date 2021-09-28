@@ -2,6 +2,7 @@ import fileinput
 import sys
 import math
 
+
 def main():
     data = get_formatted_data()
     print(solve(data))
@@ -13,40 +14,37 @@ def solve(intervals: list) -> int:
     intervals.sort(key=lambda arr: arr[1])
 
     M = {}
-
     for i in range(n):
+        M[i] = intervals[i][2]
+
+    for i in range(1, n):
         s, _, w = intervals[i]
-        if i == 0:
-            M[i] = 0
-        elif i == 1:
-            M[i] = w
-        else:
-            x = binary_search(i, intervals, s, i // 2, i)
 
-            take = w if x == -1 else w + M[x]
-            drop: int = 0 + M[i - 1]
+        x = binary_search(intervals, i)
 
-            M[i] = max(take, drop)
+        take: int = w if x == -1 else w + M[x]
+        drop: int = 0 + M[i - 1]
+
+        M[i] = max(take, drop)
 
     return M[n - 1]
 
 
-def binary_search(start_index: int, intervals: list, start_time: int, lookup_index: int, previous_index: int = 0):
-    lookup = intervals[lookup_index]
-    _, finish_time, _ = lookup
-
-    if (finish_time > start_time):
-        if(lookup_index == 0):
-            return -1
-
-        return binary_search(start_index, intervals, start_time, lookup_index // 2, lookup_index)
-    elif (finish_time < start_time):
-        if (start_index != lookup_index + 1 and intervals[lookup_index + 1][1] > start_time):
-            return lookup_index
-
-        return binary_search(start_index, intervals, start_time, math.ceil((lookup_index + previous_index) / 2), lookup_index)
-    else:
-        return lookup_index
+def binary_search(intervals: list,  n) -> int:
+    low = 0
+    high = n
+ 
+    while low <= high:
+        mid = (low + high) // 2
+        if intervals[mid][1] <= intervals[n][0]:
+            if intervals[mid + 1][1] <= intervals[n][0]:
+                low = mid + 1
+            else:
+                return mid
+        else:
+            high = mid - 1
+ 
+    return -1
 
 
 def get_formatted_data() -> list:
