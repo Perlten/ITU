@@ -1,18 +1,17 @@
 # Exercise 3.1
 
-Mark1 is fun because it seem to be incredebly fast, however this is because the JIT detects that the value we store the multiplication in is never used and therefore removes the unused code at run time
+Mark1 is fun because it seem to be incredibly fast, however this is because the JIT detects that the value we store the multiplication in is never used and therefore removes the unused code at run time
 
 
 Mark5 is pretty interesting as you can see how the jit compiler improves the runtime the more time it has to analyze the solution
 
 
-The only thing i find a bit wierd is the fact that all the marks are significantly faster on my machine than the ones from the note. Maybe this is because of my operating system, or some other factor unbeknown to me
-
+The only thing i find a bit weird is the fact that all the marks are significantly faster on my machine than the ones from the note. Maybe this is because of my operating system, or some other factor unbeknown to me
 
 
 # Exercise 3.2.1
 
-In all the mesurements there is a decrease in runtime when goind from running it two times to four. However there is a huge decrease in run time when going from two -> four times when inspecting thread creation 
+In all the measurements there is a decrease in runtime when going from running it two times to four. However there is a huge decrease in run time when going from two -> four times when inspecting thread creation 
 Thread create                     31390,3 ns   75981,87          2
 Thread create                      8739,0 ns    2604,13          4
 
@@ -33,8 +32,6 @@ Thread create start               55965,3 ns    2266,12       8192
 Thread create start join         113541,2 ns    8599,73       4096
 ai value = 901060000
 Uncontended lock                      6,0 ns       0,12   67108864
-
-
 
 
 3.3.1
@@ -85,7 +82,6 @@ countParallelN      13          1703774.3 ns   27142.12        256
 countParallelN      14          1693935.9 ns   66299.14        256
 countParallelN      15          1704002.3 ns   68437.10        256
 countParallelN      16          1695725.4 ns   47862.75        256
-
 
 
 3.4

@@ -21,12 +21,10 @@ public class BoundedBuffer<T> implements BoundedBufferInterface<T> {
 
     @Override
     public T take() throws Exception {
-        while (this.buffer.isEmpty()) {
-            this.takeSemaphore.acquire();
-        }
+        this.takeSemaphore.acquire();
 
         T data = this.buffer.pop();
-
+        
         System.out.println("take: " + data);
 
         this.insertSemaphore.release();
