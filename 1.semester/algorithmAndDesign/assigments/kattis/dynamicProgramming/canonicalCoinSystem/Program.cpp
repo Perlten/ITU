@@ -53,15 +53,15 @@ std::vector<int> dynamicApproach(std::vector<int> &coins, int amount) {
     std::vector<int> M(amount + 1, 0);
 
     for (int coin : coins) {
-        for (int currentAmount = 1; currentAmount < amount + 1; currentAmount++) {
+        for (int currentAmount = 0; currentAmount < amount + 1; currentAmount++) {
             if (coin <= currentAmount) {
                 int leftover = currentAmount - coin;
-                int coinUsedForLeftover = M[leftover];
+                int coinsUsedForLeftover = M[leftover];
 
                 if (M[currentAmount] == 0) {
-                    M[currentAmount] = coinUsedForLeftover + 1;
+                    M[currentAmount] = coinsUsedForLeftover + 1;
                 } else {
-                    M[currentAmount] = std::min(coinUsedForLeftover + 1, M[currentAmount]);
+                    M[currentAmount] = std::min(coinsUsedForLeftover + 1, M[currentAmount]);
                 }
             }
         }
