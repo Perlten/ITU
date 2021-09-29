@@ -12,11 +12,11 @@ public class BoundedBuffer<T> implements BoundedBufferInterface<T> {
 
     public BoundedBuffer(int bufferSize) throws InterruptedException {
         this.insertSemaphore = new Semaphore(bufferSize);
-        this.takeSemaphore = new Semaphore(bufferSize);
+        this.takeSemaphore = new Semaphore(0);
 
-        for (int i = 0; i < bufferSize; i++) {
-            this.takeSemaphore.acquire();
-        }
+        // for (int i = 0; i < bufferSize; i++) {
+        //     this.takeSemaphore.acquire();
+        // }
     }
 
     @Override

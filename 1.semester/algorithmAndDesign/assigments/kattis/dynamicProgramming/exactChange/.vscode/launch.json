@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/exactChange.py",
             "console": "integratedTerminal",
-            "args": ["C.in"]
+            "args": ["2.in"]
         }
     ]
 }
