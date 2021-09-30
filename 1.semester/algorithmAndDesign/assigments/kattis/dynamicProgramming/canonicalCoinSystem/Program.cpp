@@ -31,17 +31,20 @@ std::vector<int> getInputData(int argc, char **argv) {
 
 int greedyApproach(std::vector<int> &coins, int amount, int stopAt) {
     int counter = 0;
+    
     while (amount > 0) {
         for (int i = coins.size() - 1; i >= 0; i--) {
             int coin = coins[i];
             if (coin <= amount) {
-                amount -= coin;
-                counter++;
+                int divided = amount / coin;
 
-                if(counter > stopAt) {
+                amount -= coin * divided;
+                counter += divided;
+
+                if (counter > stopAt) {
                     return counter;
                 }
-                
+
                 break;
             }
         }
@@ -70,7 +73,7 @@ std::vector<int> dynamicApproach(std::vector<int> &coins, int amount) {
 }
 
 void solve(std::vector<int> &coins) {
-    int upperBound = coins[coins.size() - 1] + coins[coins.size() - 2];
+    int upperBound = coins[coins.size() - 1] + coins[coins.size() - 2] + 1;
     int lowerBound = coins[coins.size() - 3];
 
     auto dynamicResult = dynamicApproach(coins, upperBound);
@@ -81,6 +84,7 @@ void solve(std::vector<int> &coins) {
             return;
         }
     }
+
     std::cout << "canonical" << std::endl;
 }
 

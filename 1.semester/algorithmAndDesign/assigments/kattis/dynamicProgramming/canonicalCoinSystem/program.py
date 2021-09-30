@@ -33,8 +33,12 @@ def greedy_approach(coins: list, amount: int) -> int:
     while(amount > 0):
         for coin in reversed(coins):
             if coin <= amount:
-                amount = amount - coin
-                counter = counter + 1
+
+                divided = amount / coin
+                
+                amount = amount -  (coin * divided);
+                counter = counter + divided;
+
                 break
     return counter
 
