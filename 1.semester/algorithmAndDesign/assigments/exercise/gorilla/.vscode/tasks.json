@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "g++ -g Gorilla.cpp -o gorilla.exe",
+            "command": "g++ -std=c++17 -g Gorilla.cpp -o gorilla.exe",
             "group": {
                 "kind": "build",
                 "isDefault": true

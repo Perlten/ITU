@@ -1,4 +1,4 @@
 >Sphinx 
-TAGGTG
->Snark 
-ATCGT
+ATGGCCTC
+>Bandersnatch 
+ACGGCTC
