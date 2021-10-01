@@ -29,7 +29,7 @@ std::vector<int> getInputData(int argc, char **argv) {
     }
 }
 
-int greedyApproach(std::vector<int> &coins, int amount, int stopAt) {
+bool greedyApproach(std::vector<int> &coins, int amount, int stopAt) {
     int counter = 0;
     
     while (amount > 0) {
@@ -42,21 +42,24 @@ int greedyApproach(std::vector<int> &coins, int amount, int stopAt) {
                 counter += divided;
 
                 if (counter > stopAt) {
-                    return counter;
+                    return false;
                 }
 
                 break;
             }
         }
     }
-    return counter;
+    return true;
 }
 
 std::vector<int> dynamicApproach(std::vector<int> &coins, int amount) {
     std::vector<int> M(amount + 1, 0);
+   
+    int i = 0;
+    std::fill(M.begin(), M.end(), i++);
 
     for (int coin : coins) {
-        for (int currentAmount = 0; currentAmount < amount + 1; currentAmount++) {
+        for (int currentAmount = coin; currentAmount < amount + 1; currentAmount++) {
             if (coin <= currentAmount) {
                 int leftover = currentAmount - coin;
                 int coinsUsedForLeftover = M[leftover];
@@ -79,7 +82,7 @@ void solve(std::vector<int> &coins) {
     auto dynamicResult = dynamicApproach(coins, upperBound);
 
     for (int i = upperBound; i >= lowerBound; i--) {
-        if (greedyApproach(coins, i, dynamicResult[i]) != dynamicResult[i]) {
+        if (!greedyApproach(coins, i, dynamicResult[i])) {
             std::cout << "non-canonical" << std::endl;
             return;
         }

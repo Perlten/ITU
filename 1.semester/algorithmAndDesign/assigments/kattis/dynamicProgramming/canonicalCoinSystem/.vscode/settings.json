@@ -49,6 +49,7 @@
         "vector": "cpp",
         "algorithm": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "random": "cpp"
     }
 }
