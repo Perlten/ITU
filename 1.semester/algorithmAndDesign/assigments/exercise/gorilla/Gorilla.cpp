@@ -172,7 +172,6 @@ std::tuple<std::string, std::string> tracebackMatrixToString(std::vector<std::ve
 int main(int argc, char **argv) {
     auto [data, keyVector] = getInputData(argc, argv);
 
-    // std::cout << kv.first << " " << kv2.first << std::endl;
     for (int i = 0; i < keyVector.size(); i++) {
         for (int j = i + 1; j < keyVector.size(); j++) {
             std::cout << keyVector[i] << " / " << keyVector[j] << std::endl;
