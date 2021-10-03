@@ -48,7 +48,7 @@ object RNG {
   // Exercise 2 (CB 6.2)
   def double(rng: RNG): (Double, RNG) = {
     nonNegativeInt(rng) match {
-      case (x, s) => (x / Int.MaxValue, s)
+      case (x, s) => (x.toFloat / Int.MaxValue, s)
     }
   }
 
@@ -75,7 +75,8 @@ object RNG {
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
     (rng.nextInt) match {
       case (i, rng2) =>
-        if (count == 1) (List(i), rng2) else (i :: ints(count - 1)(rng2)._1, rng2)
+        if (count == 1) (List(i), rng2)
+        else (i :: ints(count - 1)(rng2)._1, rng2)
     }
   }
 
@@ -102,12 +103,20 @@ object RNG {
   // at load-time without your implementation).
 
   lazy val _double: Rand[Double] = {
-    
+    this.map(nonNegativeInt)((s) => s.toFloat / Int.MaxValue)
   }
 
   // Exercise 6 (CB 6.6)
 
-  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    rng =>
+      {
+        val (a, rng2) = ra(
+          rng
+        ) // Should you call the method twice and skip the val or use val ?
+        (f(a, rb(rng)._1), rng2)
+      }
+  }
 
   // this is given in the book
 
@@ -120,13 +129,17 @@ object RNG {
 
   // Exercise 7 (6.7)
 
-  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ??? // TODO
 
   def _ints(count: Int): Rand[List[Int]] = ???
 
   // Exercise 8 (6.8)
-
-  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = { rng =>
+    {
+      val (a, rng2) = f(rng)
+      g(a)(rng2)
+    }
+  }
 
   def nonNegativeLessThan(n: Int): Rand[Int] = ???
 
@@ -138,11 +151,21 @@ case class State[S, +A](run: S => (A, S)) {
 
   // Exercise 9 (6.10)
 
-  def map[B](f: A => B): State[S, B] = ???
+  def map[B](f: A => B): State[S, B] = State(s => {
+    val (a, s2) = run(s)
+    (f(a), s2)
+  })
 
-  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = ???
+  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = {
+    flatMap(a => sb.map(b => f(a, b)))
+  }
 
-  def flatMap[B](f: A => State[S, B]): State[S, B] = ???
+  def flatMap[B](f: A => State[S, B]): State[S, B] = {
+    State(s => {
+      val (a, s2) = run(s)
+      f(a).run(s2)
+    })
+  }
 
 }
 

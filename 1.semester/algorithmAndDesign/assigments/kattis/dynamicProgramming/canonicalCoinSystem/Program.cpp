@@ -54,9 +54,6 @@ bool greedyApproach(std::vector<int> &coins, int amount, int stopAt) {
 
 std::vector<int> dynamicApproach(std::vector<int> &coins, int amount) {
     std::vector<int> M(amount + 1, 0);
-   
-    int i = 0;
-    std::fill(M.begin(), M.end(), i++);
 
     for (int coin : coins) {
         for (int currentAmount = coin; currentAmount < amount + 1; currentAmount++) {
