@@ -30,7 +30,7 @@ public class ThreadsAccountExperimentsMany {
         pool.execute(() -> doNTransactions(NO_TRANSACTION));
 
         // (threads[i] = new Thread(() -> doNTransactions(NO_TRANSACTION))).start();
-  
+
       } catch (Error ex) {
         System.out.println("At i = " + i + " I got error: " + ex);
         System.exit(0);
@@ -85,7 +85,6 @@ public class ThreadsAccountExperimentsMany {
             Thread.sleep(50);
           } catch (Exception e) {
           }
-          ; // Simulate transaction time
           target.deposit(amount);
         }
       }

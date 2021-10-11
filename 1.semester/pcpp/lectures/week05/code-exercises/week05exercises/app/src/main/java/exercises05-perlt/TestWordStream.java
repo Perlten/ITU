@@ -96,14 +96,14 @@ public class TestWordStream {
     // 5.3 
 
     // 1
-    final int N = 10_000_001;
+    // final int N = 10_000_001;
 
-    int[] a = new int[N];
-    Arrays.parallelSetAll(a, e -> isPrime(e) ? 1 : 0);
+    // int[] a = new int[N];
+    // Arrays.parallelSetAll(a, e -> isPrime(e) ? 1 : 0);
     
     
-    // 2
-    Arrays.parallelPrefix(a, Integer::sum);
+    // // 2
+    // Arrays.parallelPrefix(a, Integer::sum);
     
 
     int debug = 1;

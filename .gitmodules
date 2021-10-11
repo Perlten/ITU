@@ -4,3 +4,6 @@
 [submodule "1.semester/advancedProgramming/2021-adpro"]
 	path = 1.semester/advancedProgramming/2021-adpro
 	url = git@github.itu.dk:wasowski/2021-adpro.git
+[submodule "1.semester/pcpp/ConcurrentJavaExercises"]
+	path = 1.semester/pcpp/ConcurrentJavaExercises
+	url = git@github.itu.dk:jrus/ConcurrentJavaExercises.git

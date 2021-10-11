@@ -1,5 +1,6 @@
 package lectureCode;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 // For week 3
@@ -68,7 +69,7 @@ class ThreadSafeHistogram implements Histogram {
   }
 
   @Override
-  public int getTotal() {
+  public synchronized int getTotal() {
     return total;
   }
 
@@ -101,5 +102,43 @@ class Histogram1 implements Histogram {
 
   public int getTotal() {
     return total;
+  }
+}
+
+class Histogram3 implements Histogram {
+
+  private final AtomicInteger[] counts;
+  private volatile int total = 0;
+
+  public Histogram3(int span) {
+      this.counts = new AtomicInteger[span];
+  }
+
+  @Override
+  public void increment(int bin) {
+      counts[bin].incrementAndGet();
+      synchronized (this) {
+          total++;
+      }
+  }
+
+  @Override
+  public int getCount(int bin) {
+      return counts[bin].get();
+  }
+
+  @Override
+  public synchronized float getPercentage(int bin) {
+      return getCount(bin) / (float) getTotal();
+  }
+
+  @Override
+  public int getSpan() {
+      return counts.length;
+  }
+
+  @Override
+  public int getTotal() {
+      return total;
   }
 }

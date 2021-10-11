@@ -1,0 +1,12 @@
+5
+ORIGINS
+2
+2S
+13N
+DESTINATIONS
+4
+0 1 5
+1 2 2
+2 3 7
+3 4 4
+
