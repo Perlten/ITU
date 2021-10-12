@@ -47,64 +47,65 @@ public class TestWordStream {
     // 1
     // System.out.println(streamSupplier.get().count());
 
-    // 2
+    // // 2
     // streamSupplier.get().limit(100).forEach(System.out::println);
 
-    // 3
+    // // 3
     // streamSupplier.get().filter(e -> e.length() >=
     // 22).forEach(System.out::println);
-    // 4
+    // // 4
     // streamSupplier.get().filter(e -> e.length() >=
     // 22).limit(1).forEach(System.out::println);
 
-    // 5
-    // real 0m1.456s
+    // // 5
+    // // real 0m1.456s
     // streamSupplier.get().filter(TestWordStream::isPalindrom).forEach(System.out::println);
 
-    // 6
-    // real 0m1.379s
+    // // 6
+    // // real 0m1.379s
     // streamSupplier.get().parallel().filter(TestWordStream::isPalindrom).forEach(System.out::println);
 
     // System.out.println(streamSupplier.get().mapToInt(String::length).average().getAsDouble());
     // System.out.println(streamSupplier.get().mapToInt(String::length).min().getAsInt());
     // System.out.println(streamSupplier.get().mapToInt(String::length).max().getAsInt());
 
-    // 8
+    // // 8
     // Map<Integer, List<String>> grouping =
     // streamSupplier.get().collect(Collectors.groupingBy(String::length));
 
-    // 9
+    // // 9
     // streamSupplier.get().map(TestWordStream::letters).limit(100).forEach(System.out::println);
 
     // 10
-    // System.out.println(streamSupplier.get().map(TestWordStream::letters).reduce(0, (z, e) -> z + e.getOrDefault('e', 0),
-    //     Integer::sum));
-
+    // System.out.println(streamSupplier.get().map(TestWordStream::letters).reduce(0,
+    // (z, e) -> z + e.getOrDefault('e', 0),
+    // Integer::sum));
 
     // 11
-    //real    0m11.129s
-    // System.out.println(streamSupplier.get().map(TestWordStream::letters).collect(Collectors.groupingBy(e -> e)).values().stream().filter(e -> e.size() > 1).count());
-    
-    // 12 
-    //real    1m5.923s
-    // System.out.println(streamSupplier.get().parallel().map(TestWordStream::letters).collect(Collectors.groupingBy(e -> e)).values().stream().filter(e -> e.size() > 1).count());
-    
-    // 13
-    //real    0m3.734s
-    // System.out.println(streamSupplier.get().parallel().map(TestWordStream::letters).collect(Collectors.groupingByConcurrent(e -> e)).values().stream().filter(e -> e.size() > 1).count());
+    // real 0m11.129s
+    System.out.println(streamSupplier.get().map(TestWordStream::letters).collect(Collectors.groupingBy(e -> e)).values()
+        .stream().filter(e -> e.size() > 1).count());
 
-    // 5.3 
+    // 12
+    // real 1m5.923s
+    System.out.println(streamSupplier.get().parallel().map(TestWordStream::letters)
+        .collect(Collectors.groupingBy(e -> e)).values().stream().filter(e -> e.size() > 1).count());
+
+    // 13
+    // real 0m3.734s
+    System.out.println(streamSupplier.get().parallel().map(TestWordStream::letters)
+        .collect(Collectors.groupingByConcurrent(e -> e)).values().stream().filter(e -> e.size() > 1).count());
+
+    // 5.3
 
     // 1
-    // final int N = 10_000_001;
+    final int N = 10_000_001;
 
-    // int[] a = new int[N];
-    // Arrays.parallelSetAll(a, e -> isPrime(e) ? 1 : 0);
-    
-    
+    int[] a = new int[N];
+    Arrays.parallelSetAll(a, e -> isPrime(e) ? 1 : 0);
+
     // // 2
-    // Arrays.parallelPrefix(a, Integer::sum);
-    
+    Arrays.parallelPrefix(a, Integer::sum);
 
     int debug = 1;
   }
@@ -116,7 +117,6 @@ public class TestWordStream {
         return false;
       }
     }
-
     return true;
   }
 
@@ -132,19 +132,19 @@ public class TestWordStream {
     for (char c : s.toCharArray()) {
       res.put(c, res.getOrDefault(c, 0) + 1);
     }
-    // TO DO: Implement properly
+
     return res;
   }
 
   public static boolean isPrime(int num) {
     if (num <= 1) {
-        return false;
+      return false;
     }
     for (int i = 2; i <= Math.sqrt(num); i++) {
-        if (num % i == 0) {
-            return false;
-        }
+      if (num % i == 0) {
+        return false;
+      }
     }
     return true;
-}
+  }
 }

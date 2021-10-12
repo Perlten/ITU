@@ -95,33 +95,38 @@ class Graph:
         sink_flow = sum([edge.capacity_used for edge in sink.ingoing_edges])
         return sink_flow
 
-    def find_min_cut(self, source: Node, sink: Node) -> int:
-
-        # TODO: i it only works if the sink is the last node in the list + can i cut(hehe) down the code 
+    def find_min_cut(self, source: Node, sink: Node):
+        # TODO: i it only works if the sink is the last node in the list + can i cut(hehe) down the code
         cut: set = {source}
 
-        min_cut = sys.maxsize
+        min_cut_value = sys.maxsize
+        min_cut = {}
 
         for outer_node in self.nodes[1: - 1]:
             for inner_node in self.nodes[1: -1]:
                 temp_cut = cut.copy()
                 temp_cut.add(inner_node)
-                temp_min_cut = 0
+
+                temp_min_cut_value = 0
 
                 for current_node in temp_cut:
                     for edge in current_node.outgoing_edges:
                         target_node = edge.target
                         if target_node not in temp_cut:
                             if edge.capacity_left < 0:
-                                temp_min_cut = sys.maxsize
+                                temp_min_cut_value = sys.maxsize
                             else:
-                                temp_min_cut = temp_min_cut + edge.capacity_left
+                                temp_min_cut_value = temp_min_cut_value + edge.capacity_left
+                
+                if temp_min_cut_value != 0 and min_cut_value > temp_min_cut_value:
+                    min_cut_value = temp_min_cut_value
+                    min_cut = temp_cut.copy()
+
                 temp_cut.add(outer_node)
-                if temp_min_cut != 0:
-                    min_cut = temp_min_cut if min_cut > temp_min_cut else min_cut
 
             cut.add(outer_node)
-        return min_cut
+
+        return min_cut_value, min_cut
 
 
 def create_graph(node_names: list, edges: list, undirected=False) -> Graph:
@@ -150,15 +155,14 @@ def main():
     node_names, edges = get_formatted_data()
     G = create_graph(node_names, edges, undirected=False)
 
-    min_cut = G.find_min_cut(G.nodes[0], G.nodes[-1])
+    min_cut_value, min_cut = G.find_min_cut(G.nodes[0], G.nodes[-1])
 
     result = G.solve(G.nodes[0], G.nodes[-1])
-    
+
     if min_cut == result:
         print(f"It works: {result}")
     else:
         print(f"It does not work. Result: {result} should be: {min_cut}")
-
 
 
 def print_pathway(pathway: list):
