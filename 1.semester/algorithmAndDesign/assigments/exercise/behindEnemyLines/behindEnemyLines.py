@@ -108,6 +108,7 @@ class Graph:
 
             print(outgoing_nodes)
 
+
     def brute_force_min_cut(self, source: Node, sink: Node):
         cut: set = {source}
 
