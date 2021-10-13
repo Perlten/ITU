@@ -141,7 +141,12 @@ object RNG {
     }
   }
 
-  def nonNegativeLessThan(n: Int): Rand[Int] = ???
+  def nonNegativeLessThan(n: Int): Rand[Int] = { rng =>
+    {
+      val (a, s2) = nonNegativeInt(rng)
+      if (a >= n) (a % n, s2) else (a, s2)
+    }
+  }
 
 }
 
@@ -199,11 +204,17 @@ object State {
 
   // Exercise 10
 
-  def state2stream[S, A](s: State[S, A])(seed: S): Stream[A] = ???
+  def state2stream[S, A](s: State[S, A])(seed: S): Stream[A] = {
+    // s.run(seed) match {case (a,nextState) => Stream.cons(a, state2stream(s)(nextState))}
+    Stream.unfold(s)(state => {
+      val (a, s2) = state.run(seed)
+      Some(a, State(s => { state.run(s2) }))
+    })
+  }
 
   // Exercise 11 (lazy is added so that the class does not crash at load time
   // before you provide an implementation).
 
-  lazy val random_integers = ???
+  lazy val random_integers : Stream[Int] = state2stream(State.random_int)(RNG.SimpleRNG(42)).take(10)
 
 }
