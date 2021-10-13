@@ -32,36 +32,36 @@ class StateSpec
   import State._
   import adpro.Stream
 
-  // "Exercise 11 (random_integers)" - {
+  "Exercise 11 (random_integers)" - {
 
-  //   "Your random integers have the right type" in {
-  //     "random_integers: Stream[Int]" should compile
-  //   }
+    "Your random integers have the right type" in {
+      "random_integers: Stream[Int]" should compile
+    }
 
-  //   "Your random integers do not throw exceptions (esp. '???)" in {
-  //     noException should be thrownBy ((random_integers: Stream[Int]) take 42000)
-  //   }
+    "Your random integers do not throw exceptions (esp. '???)" in {
+      noException should be thrownBy ((random_integers: Stream[Int]) take 42000)
+    }
 
-  //   "Your random integers seem random" in {
-  //     val l1 = (random_integers: Stream[Int]) take 5
-  //     val l2 = (random_integers: Stream[Int]) drop 420000 take 5
-  //     (l1.headOption) should not equal (l2.headOption)
-  //   }
+    "Your random integers seem random" in {
+      val l1 = (random_integers: Stream[Int]) take 5
+      val l2 = (random_integers: Stream[Int]) drop 420000 take 5
+      (l1.headOption) should not equal (l2.headOption)
+    }
 
-  // }
+  }
 
-  // "Exercise 10 (state2stream)" - {
+  "Exercise 10 (state2stream)" - {
 
-  //   "constant streams" in {
+    "constant streams" in {
 
-  //     forAll ("n", "m") { (n: Int, m: Int) =>
-  //       val s = unit[Int,Int] (n)
-  //       state2stream[Int,Int] (s) (m).take (1000).toList should contain only (n)
-  //     }
+      forAll ("n", "m") { (n: Int, m: Int) =>
+        val s = unit[Int,Int] (n)
+        state2stream[Int,Int] (s) (m).take (1000).toList should contain only (n)
+      }
 
-  //   }
+    }
 
-  // }
+  }
 
   "Exercise 9" - {
 
@@ -133,14 +133,14 @@ class StateSpec
       }
     }
 
-    "map2 should give an equivalent intDouble to direct implementation" in {
+    // "map2 should give an equivalent intDouble to direct implementation" in {
 
-      forAll ("rng") { (rng: RNG ) =>
-        val indo = State (RNG.nonNegativeInt)
-          .map2 (State(RNG.double)) {(_,_)}
-        (indo.run (rng)) should equal (RNG.intDouble (rng))
-      }
-    }
+    //   forAll ("rng") { (rng: RNG ) =>
+    //     val indo = State (RNG.nonNegativeInt)
+    //       .map2 (State(RNG.double)) {(_,_)}
+    //     (indo.run (rng)) should equal (RNG.intDouble (rng))
+    //   }
+    // }
 
     "A simple fixed scenario for sequence" in {
        forAll ("rng","l") { (rng: RNG, l: List[Int]) =>
@@ -177,53 +177,53 @@ class RNGSpec
       }
     }
 
-  // "Exercise 8 (flatMap, nonNegativeLessThan)" - {
+  "Exercise 8 (flatMap, nonNegativeLessThan)" - {
 
-  //   "flatMap associativity law" in {
+    "flatMap associativity law" in {
 
-  //     val r1 =
-  //       flatMap (
-  //         flatMap (nonNegativeInt) { n => unit (n+1) }) {
-  //           m => unit (m-42)
-  //         }
-  //     val r2 =
-  //       flatMap (nonNegativeInt) { n =>
-  //         flatMap (unit (n+1)) { m => unit (m-42) }
-  //       }
+      val r1 =
+        flatMap (
+          flatMap (nonNegativeInt) { n => unit (n+1) }) {
+            m => unit (m-42)
+          }
+      val r2 =
+        flatMap (nonNegativeInt) { n =>
+          flatMap (unit (n+1)) { m => unit (m-42) }
+        }
 
-  //     forAll ("rng") { (rng: RNG) =>
-  //       (r1 (rng)) should equal (r2 (rng))
-  //     }
+      forAll ("rng") { (rng: RNG) =>
+        (r1 (rng)) should equal (r2 (rng))
+      }
 
-  //   }
+    }
 
-  //   "flatMap identity law" in {
-  //     forAll (Gen.choose(0,1000) -> "n") { (n: Int) =>
-  //       forAll ("rng") { (rng: RNG) =>
-  //         withClue ("right:") {
-  //           val r1 = flatMap(ints(n % 4242) _) (unit)
-  //           val r2 = ints (n % 4242) _
-  //           (r1 (rng)) should equal (r2 (rng))
-  //         }
-  //         withClue ("left:") {
-  //           val r1 = flatMap(unit(n))(n => ints (n % 4242) _)
-  //           val r2 = ints (n % 4242) _
-  //           (r1 (rng)) should equal (r2 (rng))
-  //         }
-  //       }
-  //     }
-  //   }
-  // 
-  //   "nonNegativeLessThan (n) yields numbers from 0 to n"  in {
-  //     forAll (Gen.choose(1,10000) -> "n", genRNG -> "rng") {
-  //       (n: Int, rng: RNG) =>
-  //         val (m,_) = nonNegativeLessThan (n) (rng)
-  //         m should be >= 0
-  //         m should be <= n
-  //     }
-  //   }
+    "flatMap identity law" in {
+      forAll (Gen.choose(0,1000) -> "n") { (n: Int) =>
+        forAll ("rng") { (rng: RNG) =>
+          withClue ("right:") {
+            val r1 = flatMap(ints(n % 4242) _) (unit)
+            val r2 = ints (n % 4242) _
+            (r1 (rng)) should equal (r2 (rng))
+          }
+          withClue ("left:") {
+            val r1 = flatMap(unit(n))(n => ints (n % 4242) _)
+            val r2 = ints (n % 4242) _
+            (r1 (rng)) should equal (r2 (rng))
+          }
+        }
+      }
+    }
+  
+    "nonNegativeLessThan (n) yields numbers from 0 to n"  in {
+      forAll (Gen.choose(1,10000) -> "n", genRNG -> "rng") {
+        (n: Int, rng: RNG) =>
+          val (m,_) = nonNegativeLessThan (n) (rng)
+          m should be >= 0
+          m should be <= n
+      }
+    }
 
-  // }
+  }
 
 
   // "Exercise 7 (sequence)" - {
@@ -322,31 +322,31 @@ class RNGSpec
   // }
 
 
-  // "Exercise 3 (intDouble,DoubleInt)" - {
+  "Exercise 3 (intDouble,DoubleInt)" - {
 
-  //   "the implementations should compile (so you got the return type right)" in {
+    "the implementations should compile (so you got the return type right)" in {
 
-  //     "val rng = SimpleRNG(42); intDouble(rng): ((Int,Double),RNG)" should compile
-  //     "val rng = SimpleRNG(42); doubleInt(rng): ((Double,Int),RNG)" should compile
+      "val rng = SimpleRNG(42); intDouble(rng): ((Int,Double),RNG)" should compile
+      "val rng = SimpleRNG(42); doubleInt(rng): ((Double,Int),RNG)" should compile
 
-  //   }
+    }
 
-  //   "intDouble should not throw exceptions (in particular '???' is removed)" in {
-  //     forAll ("rng") { (rng: RNG) =>
-  //       noException should be thrownBy (intDouble(rng))
-  //     }
-  //   }
+    "intDouble should not throw exceptions (in particular '???' is removed)" in {
+      forAll ("rng") { (rng: RNG) =>
+        noException should be thrownBy (intDouble(rng))
+      }
+    }
 
-  //   "doubleInt should not throw exceptions (in particular '???' is removed)" in {
-  //     forAll ("rng") { (rng: RNG) =>
-  //       noException should be thrownBy (doubleInt(rng))
-  //     }
-  //   }
+    "doubleInt should not throw exceptions (in particular '???' is removed)" in {
+      forAll ("rng") { (rng: RNG) =>
+        noException should be thrownBy (doubleInt(rng))
+      }
+    }
 
-  //   subsequentValuesAreDifferent (intDouble, "intDouble")
-  //   subsequentValuesAreDifferent (doubleInt, "doubleInt")
+    subsequentValuesAreDifferent (intDouble, "intDouble")
+    subsequentValuesAreDifferent (doubleInt, "doubleInt")
 
-  // }
+  }
 
 
   // "Exercise 2 (double)" - {

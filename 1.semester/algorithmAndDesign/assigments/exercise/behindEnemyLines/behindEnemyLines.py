@@ -52,7 +52,7 @@ class Graph:
         path.reverse()
         return path
 
-    def bfs(self, source: Node, sink: Node) -> list:
+    def bfs(self, source: Node, sink: Node, returnEmptyList=True):
 
         queue = [source]
         seen_nodes = {source}
@@ -72,7 +72,9 @@ class Graph:
 
                     queue.append(target_node)
                     seen_nodes.add(target_node)
-        return []
+        if (returnEmptyList):
+            return []
+        return path_map
 
     def solve(self, source: Node, sink: Node):
         pathway: list = self.bfs(source, sink)
@@ -95,8 +97,19 @@ class Graph:
         sink_flow = sum([edge.capacity_used for edge in sink.ingoing_edges])
         return sink_flow
 
-    def find_min_cut(self, source: Node, sink: Node):
-        # TODO: i it only works if the sink is the last node in the list + can i cut(hehe) down the code
+    def min_cut(self, source: Node, sink: Node):
+        # path = list(self.bfs(source, sink, returnEmptyList=False).values())
+        seen_nodes: set = set()
+        node_queue = [source]
+
+        while(len(node_queue) != 0):
+            current_node = node_queue.pop(0)
+            outgoing_nodes = [edge.target for edge in current_node.outgoing_edges if edge.capacity_left > 0 and edge.target not in seen_nodes]
+
+            print(outgoing_nodes)
+
+
+    def brute_force_min_cut(self, source: Node, sink: Node):
         cut: set = {source}
 
         min_cut_value = sys.maxsize
@@ -117,7 +130,7 @@ class Graph:
                                 temp_min_cut_value = sys.maxsize
                             else:
                                 temp_min_cut_value = temp_min_cut_value + edge.capacity_left
-                
+
                 if temp_min_cut_value != 0 and min_cut_value > temp_min_cut_value:
                     min_cut_value = temp_min_cut_value
                     min_cut = temp_cut.copy()
@@ -155,11 +168,12 @@ def main():
     node_names, edges = get_formatted_data()
     G = create_graph(node_names, edges, undirected=False)
 
-    min_cut_value, min_cut = G.find_min_cut(G.nodes[0], G.nodes[-1])
+    brute_force_min_cut_value, min_cut = G.brute_force_min_cut(G.nodes[0], G.nodes[-1])
 
     result = G.solve(G.nodes[0], G.nodes[-1])
+    min_cut = G.min_cut(G.nodes[0], G.nodes[-1])
 
-    if min_cut == result:
+    if brute_force_min_cut_value == result:
         print(f"It works: {result}")
     else:
         print(f"It does not work. Result: {result} should be: {min_cut}")
