@@ -35,8 +35,8 @@ class ReadWriteCASLock implements SimpleRWTryLockInterface {
     private static abstract class Holders { }
 
     private static class ReaderList extends Holders {
-	private final Thread thread = null;
-	private final ReaderList next = null;
+	private final Thread thread;
+	private final ReaderList next;
 
 	// TODO: Constructor
 
@@ -46,7 +46,7 @@ class ReadWriteCASLock implements SimpleRWTryLockInterface {
     }
 
     private static class Writer extends Holders {
-	public final Thread thread = null;
+	public final Thread thread;
 
 	// TODO: Constructor
 	
