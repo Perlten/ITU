@@ -6,7 +6,7 @@ import random
 
 
 class Edge:
-    def __init__(self, capacity: int, source: 'Node', target: 'Node') -> None:
+    def __init__(self, capacity: int, source: 'Node', target: 'Node', is_reverse: bool = False) -> None:
         self.capacity_left = capacity
         self.capacity_used = 0
 
@@ -14,6 +14,7 @@ class Edge:
         self.target = target
 
         self.reverse_edge = None
+        self.is_reverse = is_reverse
 
     def can_flow_increase(self):
         return (self.capacity_left > 0 or self.capacity_left == -1)
@@ -52,8 +53,7 @@ class Graph:
         path.reverse()
         return path
 
-    def bfs(self, source: Node, sink: Node, returnEmptyList=True):
-
+    def bfs(self, source: Node, sink: Node, return_visited_on_empty=False):
         queue = [source]
         seen_nodes = {source}
 
@@ -72,9 +72,10 @@ class Graph:
 
                     queue.append(target_node)
                     seen_nodes.add(target_node)
-        if (returnEmptyList):
-            return []
-        return path_map
+                    
+        if (return_visited_on_empty):
+            return list(seen_nodes)
+        return []
 
     def solve(self, source: Node, sink: Node):
         pathway: list = self.bfs(source, sink)
@@ -98,49 +99,16 @@ class Graph:
         return sink_flow
 
     def min_cut(self, source: Node, sink: Node):
-        # path = list(self.bfs(source, sink, returnEmptyList=False).values())
-        seen_nodes: set = set()
-        node_queue = [source]
+        nodes_in_cut: set = set(self.bfs(source, sink, True))
 
-        while(len(node_queue) != 0):
-            current_node = node_queue.pop(0)
-            outgoing_nodes = [edge.target for edge in current_node.outgoing_edges if edge.capacity_left > 0 and edge.target not in seen_nodes]
+        min_cut = []
+        for node in nodes_in_cut:
+            for edge in node.outgoing_edges:
+                target = edge.target
+                if target not in nodes_in_cut and not edge.is_reverse:
+                    min_cut.append(edge)
 
-            print(outgoing_nodes)
-
-
-    def brute_force_min_cut(self, source: Node, sink: Node):
-        cut: set = {source}
-
-        min_cut_value = sys.maxsize
-        min_cut = {}
-
-        for outer_node in self.nodes[1: - 1]:
-            for inner_node in self.nodes[1: -1]:
-                temp_cut = cut.copy()
-                temp_cut.add(inner_node)
-
-                temp_min_cut_value = 0
-
-                for current_node in temp_cut:
-                    for edge in current_node.outgoing_edges:
-                        target_node = edge.target
-                        if target_node not in temp_cut:
-                            if edge.capacity_left < 0:
-                                temp_min_cut_value = sys.maxsize
-                            else:
-                                temp_min_cut_value = temp_min_cut_value + edge.capacity_left
-
-                if temp_min_cut_value != 0 and min_cut_value > temp_min_cut_value:
-                    min_cut_value = temp_min_cut_value
-                    min_cut = temp_cut.copy()
-
-                temp_cut.add(outer_node)
-
-            cut.add(outer_node)
-
-        return min_cut_value, min_cut
-
+        return min_cut
 
 def create_graph(node_names: list, edges: list, undirected=False) -> Graph:
     nodes = [Node(name) for name in node_names]
@@ -149,7 +117,7 @@ def create_graph(node_names: list, edges: list, undirected=False) -> Graph:
         u, v, c = edge_data
         edge = Edge(c, nodes[u], nodes[v])
 
-        reverse_edge = Edge(c if undirected else 0, nodes[v], nodes[u])
+        reverse_edge = Edge(c if undirected else 0, nodes[v], nodes[u], True)
 
         edge.reverse_edge = reverse_edge
         reverse_edge.reverse_edge = edge
@@ -168,15 +136,11 @@ def main():
     node_names, edges = get_formatted_data()
     G = create_graph(node_names, edges, undirected=False)
 
-    brute_force_min_cut_value, min_cut = G.brute_force_min_cut(G.nodes[0], G.nodes[-1])
-
     result = G.solve(G.nodes[0], G.nodes[-1])
     min_cut = G.min_cut(G.nodes[0], G.nodes[-1])
+    check_res = sum([edge.capacity_used for edge in min_cut]) # For debugging
 
-    if brute_force_min_cut_value == result:
-        print(f"It works: {result}")
-    else:
-        print(f"It does not work. Result: {result} should be: {min_cut}")
+    return 0
 
 
 def print_pathway(pathway: list):

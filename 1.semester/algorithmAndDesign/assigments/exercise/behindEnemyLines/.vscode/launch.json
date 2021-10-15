@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/behindEnemyLines.py",
             "console": "integratedTerminal",
-            // "args": ["data/rail.txt"]
-            "args": ["data/book_rail.txt"]
+            "args": ["data/rail.txt"]
+            // "args": ["data/book_rail.txt"]
             // "args": ["data/rail_2.txt"]
             // "args": ["data/book_rail_infinite.txt"]
         }

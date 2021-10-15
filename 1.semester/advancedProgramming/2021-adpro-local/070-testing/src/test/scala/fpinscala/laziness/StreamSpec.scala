@@ -7,6 +7,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
 import stream00._ // uncomment to test the book solution (should pass your tests)
+import scala.util.Random
 // import stream01._ // uncomment to test the broken headOption implementation
 // import stream02._ // uncomment to test another version that breaks headOption
 
@@ -37,6 +38,10 @@ class StreamSpec
       la <- arbitrary[List[A]] suchThat { _.nonEmpty }
     } yield list2stream(la)
 
+  def genNonNegativeInt[A](): Gen[Int] = {
+    Gen.choose[Int](1, Int.MaxValue)
+  }
+
   implicit val arbIntStream =
     Arbitrary[Stream[Int]](genNonEmptyStream[Int])
 
@@ -63,8 +68,8 @@ class StreamSpec
     "returns the head of random stream packaged in Some (02)" in {
 
       // Make the generator available in the context
-      implicit val arbIntStream =
-        Arbitrary[Stream[Int]](genNonEmptyStream[Int])
+      // implicit val arbIntStream =
+      //   Arbitrary[Stream[Int]](genNonEmptyStream[Int])
 
       // Uses our generator of non empty streams
       // thanks to the implicit declaration above
@@ -78,9 +83,6 @@ class StreamSpec
     // ...
 
     "whatever" in {
-      implicit val arbIntStream =
-        Arbitrary[Stream[Int]](genNonEmptyStream[Int])
-
       forAll { (s: Stream[Int]) =>
         noException shouldBe thrownBy(
           cons(1, cons(throw new Exception, s)).headOption
@@ -94,9 +96,6 @@ class StreamSpec
   "take" - {
 
     "takes does force the head nor tail" in {
-      implicit val arbIntStream =
-        Arbitrary[Stream[Int]](genNonEmptyStream[Int])
-
       forAll { (s: Stream[Int]) =>
         val x = cons(
           throw new Exception,
@@ -107,9 +106,6 @@ class StreamSpec
     }
 
     "takes(n) does not force n + 1" in {
-      implicit val arbIntStream =
-        Arbitrary[Stream[Int]](genNonEmptyStream[Int])
-
       forAll { (s: Stream[Int]) =>
         val x = cons(
           0,
@@ -120,37 +116,63 @@ class StreamSpec
     }
 
     "exercise 5" in {
+      implicit val arbInt = Arbitrary[Int](genNonNegativeInt())
+
       forAll("s", "n") { (s: Stream[Int], n: Int) =>
-        val absN = Math.abs(n)
-        s.take(absN).take(absN).toList shouldBe s.take(absN).toList
+        s.take(n).take(n).toList shouldBe s.take(n).toList
       }
     }
   }
 
   "drop" - {
     "exercise 6" in {
-      implicit val nonNegativeInt = Gen.choose[Int](1, Int.MaxValue)
+      implicit val arbInt = Arbitrary[Int]({
+        Gen.choose[Int](1, (Int.MaxValue - 10) / 2)
+      })
 
       forAll("s", "n", "m") { (s: Stream[Int], n: Int, m: Int) =>
         s.drop(n).drop(m).toList shouldBe s.drop(n + m).toList
       }
     }
-  }
-  // Exercise 6
 
-  // Exercise 7
+    "exercise 7" in {
+      implicit val arbInt = Arbitrary[Int](genNonNegativeInt())
+
+      forAll("s", "n") { (s: Stream[Int], n: Int) =>
+        val s2 = s.append(s.take(n).map(e => throw new Exception))
+        noException shouldBe thrownBy(s2.drop(n).toList)
+      }
+    }
+  }
 
   "map" - {
+    "exercise 8" in {
+      forAll("s") { (s: Stream[Int]) =>
+        val s2 = s.map(e => identity(e))
+        s.toList shouldBe (s2.toList)
+      }
+    }
 
-    // Exercise 8
-
-    // Exercise 9
+    "exercise 9" in {
+      val s = Stream.fibs
+      s.map(e => e)
+      noException shouldBe thrownBy(s.map(e => e))
+    }
 
   }
 
   "append" - {
 
-    // Exercise 10
+    "exercise 10" in {
+      forAll("s") { (s: Stream[Int]) =>
+        val n = Random.between(0, s.toList.length + 1)
+
+        val streamToAppend = s.take(n).map(e => 1)
+        val appendedStream = streamToAppend.append(s)
+
+        streamToAppend.toList shouldBe(appendedStream.take(n).toList)
+      }
+    }
 
   }
 
