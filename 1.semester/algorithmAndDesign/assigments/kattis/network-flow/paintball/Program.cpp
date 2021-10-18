@@ -1,9 +1,8 @@
 #include <fstream>
 #include <iostream>
-#include <istream>
-#include <limits>
 #include <numeric>
 #include <regex>
+#include <stack>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -40,15 +39,15 @@ std::string readLine(std::istream &inputStream) {
     return line;
 }
 
-std::vector<std::vector<int>> readData(std::istream &inputStream) {
+std::vector<std::vector<bool>> readData(std::istream &inputStream) {
     std::vector<std::string> metaSplit = splitLine(readLine(inputStream));
     int n = std::stoi(metaSplit[0]);
     int m = std::stoi(metaSplit[1]);
 
-    std::vector<std::vector<int>> G((n * 2) + 2, std::vector<int>((n * 2) + 2, 0));
+    std::vector<std::vector<bool>> G((n * 2) + 2, std::vector<bool>((n * 2) + 2, false));
 
     for (int i = 1; i <= n; i++) {
-        G[0][i] = 1;
+        G[0][i] = true;
     }
 
     int sinkEdge = G[0].size() - 1;
@@ -57,16 +56,16 @@ std::vector<std::vector<int>> readData(std::istream &inputStream) {
         int p1 = std::stoi(lineSplit[0]);
         int p2 = std::stoi(lineSplit[1]);
 
-        G[p1][p2 + n] = 1;
-        G[p1 + n][sinkEdge] = 1;
+        G[p1][p2 + n] = true;
+        G[p1 + n][sinkEdge] = true;
 
-        G[p2][p1 + n] = 1;
-        G[p2 + n][sinkEdge] = 1;
+        G[p2][p1 + n] = true;
+        G[p2 + n][sinkEdge] = true;
     }
     return G;
 }
 
-std::vector<std::vector<int>> getInputData(int argc, char **argv) {
+std::vector<std::vector<bool>> getInputData(int argc, char **argv) {
     if (argc > 1) {
         std::string fileName = argv[1];
         std::ifstream ifile(fileName);
@@ -76,15 +75,17 @@ std::vector<std::vector<int>> getInputData(int argc, char **argv) {
     }
 }
 
-std::vector<int> bfs(const std::vector<std::vector<int>> &G, int source, int sink) {
-    std::vector<int> queue = {source};
+std::vector<int> dfs(const std::vector<std::vector<bool>> &G, int source, int sink) {
+    int n = (G.size() - 1) / 2;
+    std::stack<int> nodeStack;
+    nodeStack.push(source);
 
     std::unordered_map<int, int> traceback;
     std::unordered_set<int> seenNodes = {source};
 
-    while (queue.size() > 0) {
-        int currentNode = queue[0];
-        queue.erase(queue.begin());
+    while (nodeStack.size() > 0) {
+        int currentNode = nodeStack.top();
+        nodeStack.pop();
 
         seenNodes.insert(currentNode);
 
@@ -103,18 +104,19 @@ std::vector<int> bfs(const std::vector<std::vector<int>> &G, int source, int sin
         }
 
         for (int i = 0; i < G[currentNode].size(); i++) {
-            if (G[currentNode][i] == 0 || seenNodes.find(i) != seenNodes.end()) continue;
-            queue.push_back(i);
-            traceback[i] = currentNode;
+            if (G[currentNode][i] == true && !seenNodes.count(i)) {
+                nodeStack.push(i);
+                traceback[i] = currentNode;
+            }
         }
     }
     return {};
 }
 
-void solve(std::vector<std::vector<int>> &G) {
+void solve(std::vector<std::vector<bool>> &G) {
     int n = (G.size() - 1) / 2;
 
-    auto path = bfs(G, 0, G.size() - 1);
+    auto path = dfs(G, 0, G.size() - 1);
 
     std::unordered_map<int, int> whoShotWho = {};
 
@@ -125,11 +127,11 @@ void solve(std::vector<std::vector<int>> &G) {
 
             if (current > 0 && current <= n) whoShotWho[current] = next - n;
 
-            G[current][next] -= 1;
-            G[next][current] += 1;
+            G[current][next] = false;
+            G[next][current] = true;
         }
 
-        path = bfs(G, 0, G.size() - 1);
+        path = dfs(G, 0, G.size() - 1);
     }
 
     int totalFlow = std::accumulate(G[G.size() - 1].begin(), G[G.size() - 1].end(), 0);
