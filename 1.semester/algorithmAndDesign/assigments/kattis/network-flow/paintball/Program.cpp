@@ -2,6 +2,7 @@
 #include <iostream>
 #include <istream>
 #include <limits>
+#include <numeric>
 #include <regex>
 #include <string>
 #include <unordered_set>
@@ -44,26 +45,24 @@ std::vector<std::vector<int>> readData(std::istream &inputStream) {
     int n = std::stoi(metaSplit[0]);
     int m = std::stoi(metaSplit[1]);
 
-    std::vector<std::vector<int>> G(n + 2, std::vector<int>(n + 2, -1));
+    std::vector<std::vector<int>> G((n * 2) + 2, std::vector<int>((n * 2) + 2, 0));
 
+    for (int i = 1; i <= n; i++) {
+        G[0][i] = 1;
+    }
+
+    int sinkEdge = G[0].size() - 1;
     for (int i = 0; i < m; i++) {
         std::vector<std::string> lineSplit = splitLine(readLine(inputStream));
         int p1 = std::stoi(lineSplit[0]);
         int p2 = std::stoi(lineSplit[1]);
-        G[p1][p2] = 1;
-        G[p2][p1] = 1;
-    }
 
-    for (int i = 1; i < G.size() - 1; i++) {
-        G[i][0] = 0;
-    }
+        G[p1][p2 + n] = 1;
+        G[p1 + n][sinkEdge] = 1;
 
-    // Creates the relation between super source and nodes and super sink and nodes
-    for (int i = 0; i < n; i++) {
-        G[0][i + 1] = 1;
-        G[i + 1][n + 1] = 1;
+        G[p2][p1 + n] = 1;
+        G[p2 + n][sinkEdge] = 1;
     }
-
     return G;
 }
 
@@ -85,9 +84,9 @@ std::vector<int> bfs(const std::vector<std::vector<int>> &G, int source, int sin
 
     while (queue.size() > 0) {
         int currentNode = queue[0];
-        seenNodes.insert(currentNode);
-
         queue.erase(queue.begin());
+
+        seenNodes.insert(currentNode);
 
         if (currentNode == sink) {
             std::vector<int> path = {sink};
@@ -104,7 +103,7 @@ std::vector<int> bfs(const std::vector<std::vector<int>> &G, int source, int sin
         }
 
         for (int i = 0; i < G[currentNode].size(); i++) {
-            if (G[currentNode][i] <= 0 || seenNodes.find(i) != seenNodes.end()) continue;
+            if (G[currentNode][i] == 0 || seenNodes.find(i) != seenNodes.end()) continue;
             queue.push_back(i);
             traceback[i] = currentNode;
         }
@@ -113,7 +112,7 @@ std::vector<int> bfs(const std::vector<std::vector<int>> &G, int source, int sin
 }
 
 void solve(std::vector<std::vector<int>> &G) {
-    int n = G.size() - 2;
+    int n = (G.size() - 1) / 2;
 
     auto path = bfs(G, 0, G.size() - 1);
 
@@ -124,21 +123,21 @@ void solve(std::vector<std::vector<int>> &G) {
             int current = path[i];
             int next = path[i + 1];
 
-            if (current > 0 and next <= n) {
-                whoShotWho[current] = next;
-            }
+            if (current > 0 && current <= n) whoShotWho[current] = next - n;
 
-            G[current][next] = 0;
-            G[next][current] = 1;
+            G[current][next] -= 1;
+            G[next][current] += 1;
         }
 
         path = bfs(G, 0, G.size() - 1);
     }
 
-    if (whoShotWho.size() != n) {
+    int totalFlow = std::accumulate(G[G.size() - 1].begin(), G[G.size() - 1].end(), 0);
+
+    if (totalFlow != n) {
         std::cout << "Impossible" << std::endl;
     } else {
-        for (int i = 1; i < G.size() - 1; i++) {
+        for (int i = 1; i <= n; i++) {
             std::cout << whoShotWho[i] << std::endl;
         }
     }

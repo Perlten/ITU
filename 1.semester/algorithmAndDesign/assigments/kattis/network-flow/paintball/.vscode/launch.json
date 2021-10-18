@@ -10,12 +10,12 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/program.exe",
             "args": [
-                "data/paintball-sample-1.in"
+                // "data/paintball-sample-1.in"
                 // "data/paintball-sample-2.in"
                 // "data/sample3.in",
                 // "data/sample4.in",
                 // "data/sample5.in",
-                // "data/sample6.in",
+                "data/sample6.in",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
