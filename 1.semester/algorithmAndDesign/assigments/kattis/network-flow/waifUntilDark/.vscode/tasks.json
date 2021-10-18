@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "ninja build",
+			"command": "ninja",
+			"options": {
+				"cwd": "${workspaceFolderBasename}/../build"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+			
+		}
+	]
+}
