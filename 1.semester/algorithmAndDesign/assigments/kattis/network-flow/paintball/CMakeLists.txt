@@ -4,7 +4,10 @@ project(Paintball)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_BUILD_TYPE Debug)
+
+# set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "-O2")
+# set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 file(COPY data DESTINATION ./)
 

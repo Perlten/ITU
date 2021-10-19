@@ -1,3 +1,4 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -13,6 +14,22 @@ std::string rtrim(const std::string &s) { return std::regex_replace(s, std::rege
 
 std::string trim(const std::string &s) { return ltrim(rtrim(s)); }
 
+std::chrono::steady_clock::time_point startTimer() {
+    auto t = std::chrono::steady_clock::now();
+    return t;
+}
+std::unordered_map<std::string, int> timetable(0);
+void stopTimer(const std::string name, std::chrono::steady_clock::time_point preTime) {
+    auto now = std::chrono::steady_clock::now();
+    auto timeelapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - preTime).count();
+    timetable[name] += timeelapsed;
+}
+
+void printTimer() {
+    for (auto e : timetable) {
+        std::cout << e.first << " " << e.second << std::endl;
+    }
+}
 std::vector<std::string> splitLine(const std::string &line, std::string delimiter = " ") {
     size_t last = 0;
     size_t next = 0;
@@ -40,9 +57,9 @@ std::string readLine(std::istream &inputStream) {
 }
 
 std::vector<std::vector<bool>> readData(std::istream &inputStream) {
-    std::vector<std::string> metaSplit = splitLine(readLine(inputStream));
-    int n = std::stoi(metaSplit[0]);
-    int m = std::stoi(metaSplit[1]);
+    auto dataReadTimer = startTimer();
+    int n, m;
+    inputStream >> n >> m;
 
     std::vector<std::vector<bool>> G((n * 2) + 2, std::vector<bool>((n * 2) + 2, false));
 
@@ -51,10 +68,9 @@ std::vector<std::vector<bool>> readData(std::istream &inputStream) {
     }
 
     int sinkEdge = G[0].size() - 1;
+    int p1, p2;
     for (int i = 0; i < m; i++) {
-        std::vector<std::string> lineSplit = splitLine(readLine(inputStream));
-        int p1 = std::stoi(lineSplit[0]);
-        int p2 = std::stoi(lineSplit[1]);
+        inputStream >> p1 >> p2;
 
         G[p1][p2 + n] = true;
         G[p1 + n][sinkEdge] = true;
@@ -62,6 +78,8 @@ std::vector<std::vector<bool>> readData(std::istream &inputStream) {
         G[p2][p1 + n] = true;
         G[p2 + n][sinkEdge] = true;
     }
+
+    stopTimer("dataRead", dataReadTimer);
     return G;
 }
 
@@ -76,20 +94,24 @@ std::vector<std::vector<bool>> getInputData(int argc, char **argv) {
 }
 
 std::vector<int> dfs(const std::vector<std::vector<bool>> &G, int source, int sink) {
+    auto dfsTimer = startTimer();
     int n = (G.size() - 1) / 2;
+
     std::stack<int> nodeStack;
     nodeStack.push(source);
 
     std::unordered_map<int, int> traceback;
-    std::unordered_set<int> seenNodes = {source};
+
+    std::vector<bool> seenNodes(G.size());
 
     while (nodeStack.size() > 0) {
         int currentNode = nodeStack.top();
         nodeStack.pop();
 
-        seenNodes.insert(currentNode);
+        seenNodes[currentNode] = true;
 
         if (currentNode == sink) {
+            auto traceBackTimer = startTimer();
             std::vector<int> path = {sink};
 
             int currentTracebackNode = traceback[sink];
@@ -100,16 +122,20 @@ std::vector<int> dfs(const std::vector<std::vector<bool>> &G, int source, int si
 
             path.push_back(source);
             std::reverse(path.begin(), path.end());
+
+            stopTimer("dfsTimer", dfsTimer);
+            stopTimer("tracebackTimer", traceBackTimer);
             return path;
         }
 
         for (int i = 0; i < G[currentNode].size(); i++) {
-            if (G[currentNode][i] == true && !seenNodes.count(i)) {
+            if (G[currentNode][i] == true && !seenNodes[i]) {
                 nodeStack.push(i);
                 traceback[i] = currentNode;
             }
         }
     }
+    stopTimer("dfsTimer", dfsTimer);
     return {};
 }
 
@@ -121,6 +147,7 @@ void solve(std::vector<std::vector<bool>> &G) {
     std::unordered_map<int, int> whoShotWho = {};
 
     while (path.size() > 0) {
+        auto solvetimer = startTimer();
         for (int i = 0; i < path.size() - 1; i++) {
             int current = path[i];
             int next = path[i + 1];
@@ -130,6 +157,8 @@ void solve(std::vector<std::vector<bool>> &G) {
             G[current][next] = false;
             G[next][current] = true;
         }
+
+        stopTimer("solveTimer", solvetimer);
 
         path = dfs(G, 0, G.size() - 1);
     }
@@ -146,8 +175,14 @@ void solve(std::vector<std::vector<bool>> &G) {
 }
 
 int main(int argc, char **argv) {
+    auto totalTimeStart = startTimer();
+
     auto G = getInputData(argc, argv);
     solve(G);
 
+    stopTimer("total", totalTimeStart);
+    printTimer();
+
+    // dfs time 19625
     return 0;
 }
