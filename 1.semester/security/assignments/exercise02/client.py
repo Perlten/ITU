@@ -1,32 +1,74 @@
 import socket
+from commen_functions import *
 
 HOST = 'localhost'
 PORT = 42424
 
-def send_message(socket: socket, message: str):
-    socket.send(bytes(message, "utf-8"))
+BOB_PRIVATE_KEY = import_key_from_file("keys/bob_private_key.pem")
+BOB_PUBLIC_KEY = import_key_from_file("keys/bob_public_key.pem")
+
+ALICE_PUBLIC_KEY = import_key_from_file("keys/alice_public_key.pem")
 
 
-def recive_message(socket: socket) -> str:
-    data: bytes = socket.recv(1024)
-    message = data.decode("utf-8")
-    print(f"Server message {message}")
-    if message.lower() == "quit":
-        raise Exception()
-    else:
-        return message
-
-
-def Main():
+def main():
     s = socket.socket()
     s.connect((HOST, PORT))
     try:
-        while True:
-            send_message(s, "hej med dig")
-            recive_message(s)
-    except:
+        play_game(s)
+    except Exception as e:
+        print(e)
         s.close()
 
 
+def play_game(socket):
+    dies = []
+    for _ in range(2):
+        # session key exchange
+        encrypted_session_key = receive_byte_message(socket)
+        session_key = asymmetric_decrypt_message(
+            BOB_PRIVATE_KEY, encrypted_session_key)
+        print("session key revived")
+
+        # overall bob dice
+        # bob commit
+        bob_commit_key = create_session_key()
+        bob_dice_bytes = create_dice_bytes()
+        bob_dice_commit = create_commitment(
+            bob_dice_bytes, bob_commit_key, BOB_PRIVATE_KEY)
+
+        send_crypto_message(socket, bob_dice_commit, session_key)
+
+        # alice commit
+        alice_dice_commit = receive_crypto_message(socket, session_key)
+        alice_dice_commit.verify_crypto_message(ALICE_PUBLIC_KEY)
+
+
+        # send bob commit key
+        send_crypto_message(socket, create_crypto_message(bob_commit_key, BOB_PRIVATE_KEY), session_key)
+
+        # revive alice commit key
+        alice_dice_commit_key_crypto_messsage = receive_crypto_message(socket, session_key)
+        alice_dice_commit_key_crypto_messsage.verify_crypto_message(ALICE_PUBLIC_KEY)
+        alice_dice_commit_key = alice_dice_commit_key_crypto_messsage.message
+
+        alice_dice_bytes = symmetric_decrypt_message(alice_dice_commit_key, alice_dice_commit.message)
+        
+        die = byte_xor(bob_dice_bytes, alice_dice_bytes) 
+        die = (int.from_bytes(die, "big", signed=False) % 6) + 1
+
+        dies.append(die)
+
+    print(f"Alice die {dies[0]} Bob die {dies[1]}")
+
+    if dies[0] > dies[1]:
+        print("Alice wins")
+    elif dies[1] > dies[0]:
+        print("Bob wins")
+    else:
+        print("Tie")
+
+    return 1
+
+
 if __name__ == '__main__':
-    Main()
+    main()
