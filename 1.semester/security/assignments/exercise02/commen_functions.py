@@ -85,8 +85,7 @@ def create_commitment(message, commitment_key, private_key):
     return create_crypto_message(message, private_key)
 
 
-def hash_message(message):
-    message = message.encode()
+def hash_message(message: bytes):
     hash_obj = SHA256.new()
     hash_obj.update(message)
     return hash_obj.digest()

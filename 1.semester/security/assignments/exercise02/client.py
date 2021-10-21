@@ -25,35 +25,40 @@ def play_game(socket):
     for _ in range(2):
         # session key exchange
         encrypted_session_key = receive_byte_message(socket)
-        session_key = asymmetric_decrypt_message(
-            BOB_PRIVATE_KEY, encrypted_session_key)
+        session_key = asymmetric_decrypt_message(BOB_PRIVATE_KEY, encrypted_session_key)
         print("session key revived")
 
         # overall bob dice
         # bob commit
         bob_commit_key = create_session_key()
         bob_dice_bytes = create_dice_bytes()
-        bob_dice_commit = create_commitment(
-            bob_dice_bytes, bob_commit_key, BOB_PRIVATE_KEY)
+        send_crypto_message(socket, create_commitment(bob_dice_bytes, bob_commit_key, BOB_PRIVATE_KEY), session_key) # sends commit
 
-        send_crypto_message(socket, bob_dice_commit, session_key)
+        send_crypto_message(socket, create_crypto_message(hash_message(bob_commit_key), BOB_PRIVATE_KEY), session_key)  # sends hash of commit key
 
         # alice commit
         alice_dice_commit = receive_crypto_message(socket, session_key)
         alice_dice_commit.verify_crypto_message(ALICE_PUBLIC_KEY)
 
+        alice_dice_commit_key_hash = receive_crypto_message(socket, session_key)
+        alice_dice_commit_key_hash.verify_crypto_message(ALICE_PUBLIC_KEY)
+        alice_dice_commit_key_hash = alice_dice_commit_key_hash.message
 
         # send bob commit key
         send_crypto_message(socket, create_crypto_message(bob_commit_key, BOB_PRIVATE_KEY), session_key)
+        # send_crypto_message(socket, create_crypto_message(create_session_key(), BOB_PRIVATE_KEY), session_key)
 
         # revive alice commit key
         alice_dice_commit_key_crypto_messsage = receive_crypto_message(socket, session_key)
         alice_dice_commit_key_crypto_messsage.verify_crypto_message(ALICE_PUBLIC_KEY)
         alice_dice_commit_key = alice_dice_commit_key_crypto_messsage.message
 
+        if alice_dice_commit_key_hash != hash_message(alice_dice_commit_key):
+            raise Exception("not the correct commit key sent from alice")
+
         alice_dice_bytes = symmetric_decrypt_message(alice_dice_commit_key, alice_dice_commit.message)
-        
-        die = byte_xor(bob_dice_bytes, alice_dice_bytes) 
+
+        die = byte_xor(bob_dice_bytes, alice_dice_bytes)
         die = (int.from_bytes(die, "big", signed=False) % 6) + 1
 
         dies.append(die)

@@ -1,3 +1,0 @@
-
-BOB_PK = "BOB"
-ALICE_PK = "ALICE"
