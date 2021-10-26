@@ -1,0 +1,8 @@
+autopep8==1.5.7
+gmpy==1.17
+pyasn1==0.4.8
+pycodestyle==2.8.0
+pycryptodome==3.11.0
+pycryptodomex==3.11.0
+rsa==4.7.2
+toml==0.10.2

@@ -16,6 +16,9 @@ class Edge:
         self.reverse_edge = None
         self.is_reverse = is_reverse
 
+        self.index_source = -1
+        self.index_target = -1
+
     def can_flow_increase(self):
         return (self.capacity_left > 0 or self.capacity_left == -1)
 
@@ -72,14 +75,13 @@ class Graph:
 
                     queue.append(target_node)
                     seen_nodes.add(target_node)
-                    
+
         if (return_visited_on_empty):
             return list(seen_nodes)
         return []
 
     def solve(self, source: Node, sink: Node):
         pathway: list = self.bfs(source, sink)
-
         while(len(pathway) != 0):
             max_flow = [
                 edge.capacity_left for edge in pathway if edge.capacity_left != -1]
@@ -105,22 +107,29 @@ class Graph:
         for node in nodes_in_cut:
             for edge in node.outgoing_edges:
                 target = edge.target
-                if target not in nodes_in_cut and not edge.is_reverse:
+                if target not in nodes_in_cut:
                     min_cut.append(edge)
 
         return min_cut
+
 
 def create_graph(node_names: list, edges: list, undirected=False) -> Graph:
     nodes = [Node(name) for name in node_names]
 
     for edge_data in edges:
         u, v, c = edge_data
+
         edge = Edge(c, nodes[u], nodes[v])
+        edge.index_source = u
+        edge.index_target = v
 
         reverse_edge = Edge(c if undirected else 0, nodes[v], nodes[u], True)
 
         edge.reverse_edge = reverse_edge
         reverse_edge.reverse_edge = edge
+
+        reverse_edge.index_source = v
+        reverse_edge.index_target = u
 
         nodes[u].outgoing_edges.append(edge)
         nodes[v].ingoing_edges.append(edge)
@@ -134,11 +143,16 @@ def create_graph(node_names: list, edges: list, undirected=False) -> Graph:
 
 def main():
     node_names, edges = get_formatted_data()
-    G = create_graph(node_names, edges, undirected=False)
+    G = create_graph(node_names, edges, undirected=True)
 
     result = G.solve(G.nodes[0], G.nodes[-1])
     min_cut = G.min_cut(G.nodes[0], G.nodes[-1])
     check_res = sum([edge.capacity_used for edge in min_cut]) # For debugging
+
+    print(result)
+    print(check_res)
+    for edge in min_cut:
+        print(f"{edge.index_source} {edge.index_target} {edge.capacity_used}")
 
     return 0
 
