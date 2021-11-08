@@ -7,9 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
-
-
 class CasHistogram implements Histogram {
     public static void main(String[] args) throws InterruptedException {
         CasHistogram histogram = new CasHistogram(8);
@@ -30,8 +27,6 @@ class CasHistogram implements Histogram {
         histogram.print();
 
     }
-
-
 
     private AtomicInteger[] histogram;
 
@@ -70,7 +65,6 @@ class CasHistogram implements Histogram {
         return value;
     }
 
-    @Override
     public void print() {
         for (int i = 0; i < histogram.length; i++) {
             System.out.println(histogram[i].get());

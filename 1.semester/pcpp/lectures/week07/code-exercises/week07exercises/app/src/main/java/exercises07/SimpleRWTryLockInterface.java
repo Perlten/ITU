@@ -4,7 +4,7 @@ package exercises07;
 
 interface SimpleRWTryLockInterface {
     public boolean readerTryLock();
-    public void readerUnlock();
+    public void readerUnlock() throws Exception;
     public boolean writerTryLock();
-    public void writerUnlock();
+    public void writerUnlock() throws Exception;
 }
