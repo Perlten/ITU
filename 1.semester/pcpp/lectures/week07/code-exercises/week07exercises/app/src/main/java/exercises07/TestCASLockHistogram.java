@@ -20,7 +20,7 @@ class TestCASLockHistogram {
 	// Evaluating performance of CAS vs Locks histograms Uncomment
 	// snippet below to evaluate the performance both Histogram
 	// implementations
-	/* 
+	
 	int noThreads = 32;
 	int range     = 100_000;	
 
@@ -41,7 +41,7 @@ class TestCASLockHistogram {
 		      return 1.0;
 		  });
 	}
-	*/
+	
     }
     
     // Function to count the prime factors of a number `p`

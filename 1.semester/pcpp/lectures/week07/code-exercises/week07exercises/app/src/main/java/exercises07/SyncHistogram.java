@@ -30,7 +30,6 @@ class SyncHistogram implements Histogram {
         return value;
     }
 
-    @Override
     public void print() {
     }
 }

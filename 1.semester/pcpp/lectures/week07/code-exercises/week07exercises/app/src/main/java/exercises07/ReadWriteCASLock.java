@@ -5,20 +5,59 @@ package exercises07;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 class ReadWriteCASLock implements SimpleRWTryLockInterface {
 
     public static void main(String[] args) {
-        // TODO execute tests (7.2.5 & 7.2.6)
+
+        ReadWriteCASLock lockingSystem = new ReadWriteCASLock();
+
+        Executor executor = Executors.newFixedThreadPool(2);
+
+        executor.execute(() -> {
+            try {
+                System.out.println("Reader: " + lockingSystem.readerTryLock() + " " + Thread.currentThread().getId());
+                lockingSystem.readerUnlock();
+                System.out.println("Reader: " + lockingSystem.readerTryLock() + " " + Thread.currentThread().getId());
+                Thread.sleep(2000);
+                lockingSystem.readerUnlock();
+                Thread.sleep(8000);
+                System.out.println("Reader: " + lockingSystem.readerTryLock() + " " + Thread.currentThread().getId());
+                System.out.println("Reader: " + lockingSystem.readerTryLock() + " " + Thread.currentThread().getId());
+                lockingSystem.readerUnlock();
+                lockingSystem.readerUnlock();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
+
+        executor.execute(() -> {
+            try {
+                Thread.sleep(2000);
+                System.out.println("Writer: " + lockingSystem.writerTryLock() + " writer " + Thread.currentThread().getId());
+                Thread.sleep(1000);
+                System.out.println("Writer: " + lockingSystem.writerTryLock() + " writer " + Thread.currentThread().getId());
+                lockingSystem.writerUnlock();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        });
     }
 
-    private AtomicReference<ReadWriteCASLock.Holders> holder;
+    private AtomicReference<ReadWriteCASLock.Holders> holder = new AtomicReference<>();
 
     public boolean readerTryLock() {
-
         var currentHolder = this.holder;
-        if (currentHolder == null || currentHolder.get() instanceof ReaderList) {
+
+        if (currentHolder.get() == null) {
+            return currentHolder.compareAndSet(null, new ReaderList(Thread.currentThread(), null));
+        }
+
+        if (currentHolder.get() instanceof ReaderList) {
             var currentReaderList = (ReaderList) currentHolder.get();
             var latestReaderList = currentReaderList;
 
@@ -30,6 +69,7 @@ class ReadWriteCASLock implements SimpleRWTryLockInterface {
 
             return this.holder.compareAndSet(currentReaderList, currentReaderList);
         }
+
         return false;
     }
 
@@ -40,8 +80,11 @@ class ReadWriteCASLock implements SimpleRWTryLockInterface {
         if (currentHolder == null || currentHolder instanceof Writer) {
             throw new Exception("YOU ARE NOT THE HOLDER !!");
         }
-
         var currentReader = (ReaderList) this.holder.get();
+        if (currentReader.next == null) {
+            this.holder.compareAndSet(currentReader, null);    
+        }
+
         if (currentReader.thread == currentThread) {
             currentReader = currentReader.next;
         } else {
@@ -87,10 +130,6 @@ class ReadWriteCASLock implements SimpleRWTryLockInterface {
             this.thread = t;
             this.parrent = parrent;
         }
-
-        // TODO: contains
-
-        // TODO: remove
     }
 
     private static class Writer extends Holders {

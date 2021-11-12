@@ -138,7 +138,7 @@ class StreamSpec
     "exercise 7" in {
       implicit val arbInt = Arbitrary[Int](genNonNegativeInt())
 
-      forAll("s", "n") { (s: Stream[Int], n: Int) =>
+      forAll("s", "n") { (s: Stream[Int], n: Int) =>t
         val s2 = s.append(s.take(n).map(e => throw new Exception))
         noException shouldBe thrownBy(s2.drop(n).toList)
       }

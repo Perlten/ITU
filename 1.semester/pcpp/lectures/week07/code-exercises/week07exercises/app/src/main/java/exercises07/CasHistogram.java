@@ -38,7 +38,8 @@ class CasHistogram implements Histogram {
 
     @Override
     public void increment(int bin) {
-        int value, newValue;
+        int value;
+        int newValue;
 
         do {
             value = histogram[bin].get();

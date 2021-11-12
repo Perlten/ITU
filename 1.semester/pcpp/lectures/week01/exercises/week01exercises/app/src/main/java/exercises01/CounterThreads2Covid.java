@@ -5,6 +5,7 @@ package exercises01;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+// CounterThreads2Covid creates a number of threads that increment a counter using a lock.
 public class CounterThreads2Covid {
 
   long counter = 0;
@@ -33,6 +34,20 @@ public class CounterThreads2Covid {
   public static void main(String[] args) { new CounterThreads2Covid(); }
 
   public class Turnstile extends Thread {
+
+    // for (int i = 0; i < PEOPLE; i++) {
+    //   lock.lock();
+    //   try {
+    //     if (counter < MAX_PEOPLE_COVID) {
+    //       counter++;
+    //       System.out.println("Person " + counter + " entered");
+    //     }
+    //   } finally {
+    //     lock.unlock();
+    //   }
+    // }
+
+
     public void run() {
       for (int i = 0; i < PEOPLE; i++) {
         lock.lock();
